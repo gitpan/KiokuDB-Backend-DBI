@@ -12,9 +12,10 @@ WriteMakefile(
     PL_FILES     => { },
     PREREQ_PM    => {
         'Moose' => 0,
+        'MooseX::Types' => '0.08',
         'MooseX::Types::Moose' => 0,
 
-        'KiokuDB' => '0.10',
+        'KiokuDB' => '0.11',
         'DBIx::Class' => '0.08010', # FIXME bump when changing to use sqlt_deploy_callback
 
         'Data::Stream::Bulk' => 0,
