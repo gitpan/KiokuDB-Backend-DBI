@@ -13,7 +13,7 @@ use KiokuDB::Backend::DBI::Schema;
 
 use namespace::clean -except => 'meta';
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 with qw(
     KiokuDB::Backend
@@ -310,17 +310,6 @@ sub prepare_mysql_insert {
     my $sth = $self->dbh->prepare("INSERT INTO entries (" . join(", ", @cols) . ") VALUES (" . join(", ", ('?') x @cols) . ") ON DUPLICATE KEY UPDATE " . join(", ", map { "$_ = ?" } @cols[1 .. $#cols]));
 
     return ( undef, $sth, @cols, @cols[1 .. $#cols] );
-}
-
-sub prepare_Pg_insert {
-    my $self = shift;
-
-    my ( $del, $ins, @bind ) = $self->prepare_fallback_insert;
-
-    use DBD::Pg qw(PG_BYTEA);
-    $ins->bind_param(5, undef, { pg_type => PG_BYTEA });
-
-    return ( $del, $ins, @bind );
 }
 
 sub prepare_fallback_insert {
