@@ -15,8 +15,9 @@ WriteMakefile(
         'MooseX::Types' => '0.08',
         'MooseX::Types::Moose' => 0,
 
-        'KiokuDB' => '0.11',
+        'KiokuDB' => '0.13',
         'DBIx::Class' => '0.08010', # FIXME bump when changing to use sqlt_deploy_callback
+        'DBI' => '1.607', # execute_array etc
 
         'Data::Stream::Bulk' => 0,
 

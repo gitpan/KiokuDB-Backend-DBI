@@ -13,7 +13,7 @@ use KiokuDB::Backend::DBI::Schema;
 
 use namespace::clean -except => 'meta';
 
-our $VERSION = "0.04";
+our $VERSION = "0.05";
 
 with qw(
     KiokuDB::Backend
@@ -86,12 +86,23 @@ has schema => (
     handles => [qw(deploy)],
 );
 
+has schema_hook => (
+    isa => "CodeRef|Str",
+    is  => "ro",
+    predicate => "has_schema_hook",
+);
+
 sub _build_schema {
     my $self = shift;
 
     my $schema = KiokuDB::Backend::DBI::Schema->clone;
 
     $schema->source("entries")->add_columns(@{ $self->columns });
+
+    if ( $self->has_schema_hook ) {
+        my $h = $self->schema_hook;
+        $self->$h($schema);
+    }
 
     $schema->connect(@{ $self->connect_info });
 }
@@ -167,30 +178,10 @@ sub _build_sql_abstract {
     SQL::Abstract->new;
 }
 
-has prepare_insert_method => (
-    isa => "Str|CodeRef",
-    is  => "ro",
-    lazy_build => 1,
-);
-
-sub _build_prepare_insert_method {
-    my $self = shift;
-
-    my $name = $self->storage->dbh->{Driver}{Name};
-
-    if ( $self->can("prepare_${name}_insert") ) {
-        return "prepare_${name}_insert";
-    } else {
-        "prepare_fallback_insert";
-    }
-}
-
 sub insert {
     my ( $self, @entries ) = @_;
 
-    my @rows = $self->entries_to_rows(@entries);
-
-    $self->insert_rows(@rows);
+    $self->insert_rows( $self->entries_to_rows(@entries) );
 
     # hopefully we're in a transaction, otherwise this totally sucks
     if ( $self->extract ) {
@@ -198,6 +189,7 @@ sub insert {
 
         foreach my $entry ( @entries ) {
             my $id = $entry->id;
+
             if ( $entry->deleted || !$entry->has_object ) {
                 $gin_index{$id} = [];
             } else {
@@ -213,124 +205,123 @@ sub insert {
 sub entries_to_rows {
     my ( $self, @entries ) = @_;
 
-    map { $self->entry_to_row($_) } @entries;
+    my ( %insert, %update );
+
+    foreach my $t ( \%insert, \%update ) {
+        foreach my $col ( @{ $self->_ordered_columns } ) {
+            $t->{$col} = [];
+        }
+    }
+
+    foreach my $entry ( @entries ) {
+        my $targ = $entry->prev ? \%update : \%insert;
+
+        my $row = $self->entry_to_row($entry, $targ);
+    }
+
+    return \( %insert, %update );
 }
 
 sub entry_to_row {
-    my ( $self, $entry ) = @_;
+    my ( $self, $entry, $collector ) = @_;
 
-    my @row = (
-        $entry->id,
-        $entry->class,
-        $entry->root ? 1 : 0,
-        $entry->tied,
-        $self->serialize($entry),
-    );
+    for (qw(id class tied)) {
+        push @{ $collector->{$_} }, $entry->$_;
+    }
+
+    push @{ $collector->{root} }, $entry->root ? 1 : 0;
+
+    push @{ $collector->{data} }, $self->serialize($entry);
 
     my $cols = $self->_columns;
 
-    foreach my $column ( sort keys %$cols ) {
+    foreach my $column ( keys %$cols ) {
+        my $c = $collector->{$column};
         if ( my $extract = $cols->{$column} ) {
             if ( my $obj = $entry->object ) {
-                push @row, $obj->$extract($column);
+                push @$c, $obj->$extract($column);
                 next;
             }
         } elsif ( ref( my $data = $entry->data ) eq 'HASH' ) {
             if ( exists $data->{$column} and not ref( my $value = $data->{$column} ) ) {
-                push @row, $value;
+                push @$c, $value;
                 next;
             }
         }
 
-        push @row, undef;
+        push @$c, undef;
     }
-
-    return \@row;
 }
 
 sub insert_rows {
-    my ( $self, @rows ) = @_;
+    my ( $self, $insert, $update ) = @_;
 
-    my ( $del, $ins, @cols ) = $self->prepare_insert();
-
-    if ( $del ) {
-        my $del_sth = $self->dbh->prepare("DELETE FROM entries WHERE id IN (" . join(", ", ('?') x @rows ) . ")");
-        $del_sth->execute(map { $_->[0] } @rows);
-        $del_sth->finish;
+    if ( $self->extract ) {
+        foreach my $rows ( $insert, $update ) {
+            my $del_gin_sth = $self->dbh->prepare_cached("DELETE FROM gin_index WHERE id = ?");
+            $del_gin_sth->execute_array(
+                {ArrayTupleStatus => []},
+                $rows->{ids},
+            );
+            $del_gin_sth->finish;
+        }
     }
 
     my $bind_attributes = $self->storage->source_bind_attributes($self->schema->source("entries"));
 
-    my $i = 1;
+    my %rows = ( insert => $insert, update => $update );
 
-    my $ord = $self->_column_order;
+    foreach my $op (qw(insert update)) {
+        my $prepare = "prepare_$op";
+        my ( $sth, @cols ) = $self->$prepare();
 
-    foreach my $column_name (@cols) {
-        my $attributes = {};
+        my $i = 1;
 
-        if( $bind_attributes ) {
-            $attributes = $bind_attributes->{$column_name}
-            if defined $bind_attributes->{$column_name};
+        foreach my $column_name (@cols) {
+            my $attributes = {};
+
+            if( $bind_attributes ) {
+                $attributes = $bind_attributes->{$column_name}
+                if defined $bind_attributes->{$column_name};
+            }
+
+            $sth->bind_param_array( $i, $rows{$op}->{$column_name}, $attributes );
+
+            $i++;
         }
 
-        my @data = map { $_->[$ord->{$column_name}] } @rows;
+        $sth->execute_array({ArrayTupleStatus => []}) or die;
 
-        $ins->bind_param_array( $i, \@data, $attributes );
-
-        $i++;
+        $sth->finish;
     }
-
-    my $rv = $ins->execute_array({ArrayTupleStatus => []});
-
-    $ins->finish;
 }
 
 sub prepare_insert {
-    my $self = shift;
-
-    my $meth = $self->prepare_insert_method;
-    $self->$meth;
-}
-
-sub prepare_SQLite_insert {
-    my $self = shift;
-
-    my @cols = @{ $self->_ordered_columns };
-
-    my $sth = $self->dbh->prepare("INSERT OR REPLACE INTO entries (" . join(", ", @cols) . ") VALUES (" . join(", ", ('?') x @cols) . ")");
-
-    return ( undef, $sth, @cols );
-}
-
-sub prepare_mysql_insert {
-    my $self = shift;
-
-    my @cols = @{ $self->_ordered_columns };
-
-    my $sth = $self->dbh->prepare("INSERT INTO entries (" . join(", ", @cols) . ") VALUES (" . join(", ", ('?') x @cols) . ") ON DUPLICATE KEY UPDATE " . join(", ", map { "$_ = ?" } @cols[1 .. $#cols]));
-
-    return ( undef, $sth, @cols, @cols[1 .. $#cols] );
-}
-
-sub prepare_fallback_insert {
     my $self = shift;
 
     my @cols = @{ $self->_ordered_columns };
 
     my $ins = $self->dbh->prepare("INSERT INTO entries (" . join(", ", @cols) . ") VALUES (" . join(", ", ('?') x @cols) . ")");
 
-    return ( 1, $ins, @cols );
+    return ( $ins, @cols );
+}
+
+sub prepare_update {
+    my $self = shift;
+
+    my ( $id, @cols ) = @{ $self->_ordered_columns };
+
+    my $upd = $self->dbh->prepare("UPDATE entries SET " . join(", ", map { "$_ = ?" } @cols) . " WHERE $id = ?");
+
+    return ( $upd, @cols, $id );
 }
 
 sub update_index {
     my ( $self, $entries ) = @_;
 
-    my $d_sth = $self->dbh->prepare_cached("DELETE FROM gin_index WHERE id = ?");
     my $i_sth = $self->dbh->prepare_cached("INSERT INTO gin_index (id, value) VALUES (?, ?)");
 
     foreach my $id ( keys %$entries ) {
-        $d_sth->execute($id);
-
         my $rv = $i_sth->execute_array(
             {ArrayTupleStatus => []},
             $id,
@@ -339,7 +330,6 @@ sub update_index {
     }
 
     $i_sth->finish;
-    $d_sth->finish;
 }
 
 sub get {
@@ -375,10 +365,12 @@ sub delete {
         # FIXME rely on cascade delete?
         my $sth = $self->dbh->prepare_cached("DELETE FROM gin_index WHERE id IN (" . join(", ", ('?') x @ids) . ")");
         $sth->execute(@ids);
+        $sth->finish;
     }
 
     my $sth = $self->dbh->prepare_cached("DELETE FROM entries WHERE id IN (" . join(", ", ('?') x @ids) . ")");
     $sth->execute(@ids);
+    $sth->finish;
 
     return;
 }
@@ -418,8 +410,8 @@ sub txn_rollback { shift->storage->txn_rollback(@_) }
 sub clear {
     my $self = shift;
 
-    $self->dbh->do("delete from entries");
-    $self->dbh->do("delete from gin_index");
+    $self->dbh->do("DELETE FROM gin_index");
+    $self->dbh->do("DELETE FROM entries");
 }
 
 sub _select_stream {
@@ -512,8 +504,8 @@ sub create_tables {
 sub drop_tables {
     my $self = shift;
 
-    $self->dbh->do("drop table entries");
-    $self->dbh->do("drop table gin_index");
+    $self->dbh->do("DROP TABLE gin_index");
+    $self->dbh->do("DROP TABLE entries");
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -580,6 +572,9 @@ loading entries.
 This driver has been tested with MySQL 5 (4.1 should be the minimal supported
 version), SQLite 3, and PostgresSQL 8.3.
 
+The SQL code is reasonably portable and should work with most databases. Binary
+column support is required when using the L<Storable> serializer.
+
 =head1 ATTRIBUTES
 
 =over 4
@@ -635,6 +630,14 @@ An optional L<Search::GIN::Extract> used to create the C<gin_index> entries.
 
 Usually L<Search::GIN::Extract::Callback>.
 
+=item schema_hook
+
+A hook that is called on the backend object as a method with the schema as the
+argument just before connecting.
+
+If you need to modify the schema in some way (adding indexes or constraints)
+this is where it should be done.
+
 =back
 
 =head1 METHODS
@@ -670,8 +673,8 @@ Yuval Kogman E<lt>nothingmuch@woobling.orgE<gt>
 
 =head1 COPYRIGHT
 
-    Copyright (c) 2008 Yuval Kogman, Infinity Interactive. All rights
-    reserved This program is free software; you can redistribute
+    Copyright (c) 2008, 2009 Yuval Kogman, Infinity Interactive. All
+    rights reserved This program is free software; you can redistribute
     it and/or modify it under the same terms as Perl itself.
 
 =cut

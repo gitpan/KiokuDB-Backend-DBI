@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               KiokuDB-Backend-DBI
-version:            0.04
+version:            0.05
 abstract:           ~
 author:  []
 license:            unknown
@@ -9,8 +9,9 @@ configure_requires:
     ExtUtils::MakeMaker:  0
 requires:
     Data::Stream::Bulk:   0
+    DBI:                  1.607
     DBIx::Class:          0.08010
-    KiokuDB:              0.11
+    KiokuDB:              0.13
     Moose:                0
     MooseX::Types:        0.08
     MooseX::Types::Moose:  0
