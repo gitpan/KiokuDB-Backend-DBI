@@ -11,9 +11,11 @@ use Data::Stream::Bulk::DBI;
 
 use KiokuDB::Backend::DBI::Schema;
 
+use SQL::Abstract;
+
 use namespace::clean -except => 'meta';
 
-our $VERSION = "0.06";
+our $VERSION = "0.07";
 
 with qw(
     KiokuDB::Backend
@@ -23,6 +25,7 @@ with qw(
     KiokuDB::Backend::Role::Scan
     KiokuDB::Backend::Role::Query::Simple
     KiokuDB::Backend::Role::Query::GIN
+    KiokuDB::Backend::Role::Concurrency::POSIX
     Search::GIN::Extract::Delegate
 );
 # KiokuDB::Backend::Role::TXN::Nested is not supported by many DBs
@@ -42,7 +45,7 @@ sub new_from_dsn {
 sub BUILD {
     my $self = shift;
 
-    $self->dbh; # connect early
+    $self->schema; # connect early
 
     if ( $self->create ) {
         $self->create_tables;
@@ -57,7 +60,13 @@ has create => (
     default => 0,
 );
 
-has [qw(dsn user password)] => (
+has 'dsn' => (
+    isa => "Str|CodeRef",
+    is  => "ro",
+);
+
+
+has [qw(user password)] => (
     isa => "Str",
     is  => "ro",
 );
@@ -111,7 +120,7 @@ has storage => (
     isa => "DBIx::Class::Storage::DBI",
     is  => "rw",
     lazy_build => 1,
-    handles    => [qw(dbh dbh_do)],
+    handles    => [qw(dbh_do)],
 );
 
 sub _build_storage { shift->schema->storage }
@@ -256,62 +265,69 @@ sub entry_to_row {
 sub insert_rows {
     my ( $self, $insert, $update ) = @_;
 
-    if ( $self->extract ) {
-        foreach my $rows ( $insert, $update ) {
-            my $del_gin_sth = $self->dbh->prepare_cached("DELETE FROM gin_index WHERE id = ?");
-            $del_gin_sth->execute_array(
-                {ArrayTupleStatus => []},
-                $rows->{ids},
-            );
-            $del_gin_sth->finish;
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
+
+        if ( $self->extract ) {
+            foreach my $rows ( $insert, $update ) {
+                if ( my @ids = @{ $rows->{ids} || [] } ) {
+                    my $bind = join(', ', map { '?' } @ids);
+
+                    my $del_gin_sth = $dbh->prepare_cached("DELETE FROM gin_index WHERE id = ($bind)");
+
+                    $del_gin_sth->execute(@ids);
+
+                    $del_gin_sth->finish;
+                }
+            }
         }
-    }
 
-    my $bind_attributes = $self->storage->source_bind_attributes($self->schema->source("entries"));
+        my $bind_attributes = $self->storage->source_bind_attributes($self->schema->source("entries"));
 
-    my %rows = ( insert => $insert, update => $update );
+        my %rows = ( insert => $insert, update => $update );
 
-    foreach my $op (qw(insert update)) {
-        my $prepare = "prepare_$op";
-        my ( $sth, @cols ) = $self->$prepare();
+        foreach my $op (qw(insert update)) {
+            my $prepare = "prepare_$op";
+            my ( $sth, @cols ) = $self->$prepare($dbh);
 
-        my $i = 1;
+            my $i = 1;
 
-        foreach my $column_name (@cols) {
-            my $attributes = {};
+            foreach my $column_name (@cols) {
+                my $attributes = {};
 
-            if( $bind_attributes ) {
-                $attributes = $bind_attributes->{$column_name}
-                if defined $bind_attributes->{$column_name};
+                if( $bind_attributes ) {
+                    $attributes = $bind_attributes->{$column_name}
+                    if defined $bind_attributes->{$column_name};
+                }
+
+                $sth->bind_param_array( $i, $rows{$op}->{$column_name}, $attributes );
+
+                $i++;
             }
 
-            $sth->bind_param_array( $i, $rows{$op}->{$column_name}, $attributes );
+            $sth->execute_array({ArrayTupleStatus => []}) or die;
 
-            $i++;
+            $sth->finish;
         }
-
-        $sth->execute_array({ArrayTupleStatus => []}) or die;
-
-        $sth->finish;
-    }
+    });
 }
 
 sub prepare_insert {
-    my $self = shift;
+    my ( $self, $dbh ) = @_;
 
     my @cols = @{ $self->_ordered_columns };
 
-    my $ins = $self->dbh->prepare("INSERT INTO entries (" . join(", ", @cols) . ") VALUES (" . join(", ", ('?') x @cols) . ")");
+    my $ins = $dbh->prepare("INSERT INTO entries (" . join(", ", @cols) . ") VALUES (" . join(", ", ('?') x @cols) . ")");
 
     return ( $ins, @cols );
 }
 
 sub prepare_update {
-    my $self = shift;
+    my ( $self, $dbh ) = @_;
 
     my ( $id, @cols ) = @{ $self->_ordered_columns };
 
-    my $upd = $self->dbh->prepare("UPDATE entries SET " . join(", ", map { "$_ = ?" } @cols) . " WHERE $id = ?");
+    my $upd = $dbh->prepare("UPDATE entries SET " . join(", ", map { "$_ = ?" } @cols) . " WHERE $id = ?");
 
     return ( $upd, @cols, $id );
 }
@@ -319,58 +335,78 @@ sub prepare_update {
 sub update_index {
     my ( $self, $entries ) = @_;
 
-    my $i_sth = $self->dbh->prepare_cached("INSERT INTO gin_index (id, value) VALUES (?, ?)");
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
 
-    foreach my $id ( keys %$entries ) {
-        my $rv = $i_sth->execute_array(
-            {ArrayTupleStatus => []},
-            $id,
-            $entries->{$id},
-        );
-    }
+        my $i_sth = $dbh->prepare_cached("INSERT INTO gin_index (id, value) VALUES (?, ?)");
 
-    $i_sth->finish;
+        foreach my $id ( keys %$entries ) {
+            my $rv = $i_sth->execute_array(
+                {ArrayTupleStatus => []},
+                $id,
+                $entries->{$id},
+            );
+        }
+
+        $i_sth->finish;
+    });
 }
 
 sub get {
     my ( $self, @ids ) = @_;
 
-    my $sth = $self->dbh->prepare_cached("SELECT id, data FROM entries WHERE id IN (" . join(", ", ('?') x @ids) . ")");
-    $sth->execute(@ids);
-
-    $sth->bind_columns( \my ( $id, $data ) );
-
-    # not actually necessary but i'm keeping it around for reference:
-    #my ( $id, $data );
-    #use DBD::Pg qw(PG_BYTEA);
-    #$sth->bind_col(1, \$id);
-    #$sth->bind_col(2, \$data, { pg_type => PG_BYTEA });
-
     my %entries;
-    while ( $sth->fetch ) {
-        $entries{$id} = $self->deserialize($data);
-    }
+
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
+
+        my $sth;
+
+        if ( @ids ) {
+            $sth = $dbh->prepare_cached("SELECT id, data FROM entries WHERE id IN (" . join(", ", ('?') x @ids) . ")");
+            $sth->execute(@ids);
+        } else {
+            $sth = $dbh->prepare_cached("SELECT id, data FROM entries");
+            $sth->execute;
+        }
+
+        $sth->bind_columns( \my ( $id, $data ) );
+
+        # not actually necessary but i'm keeping it around for reference:
+        #my ( $id, $data );
+        #use DBD::Pg qw(PG_BYTEA);
+        #$sth->bind_col(1, \$id);
+        #$sth->bind_col(2, \$data, { pg_type => PG_BYTEA });
+
+        while ( $sth->fetch ) {
+            $entries{$id} = $data;
+        }
+    });
 
     return if @ids != keys %entries; # ->rows only works after we're done
 
-    return @entries{@ids};
+    return map { $self->deserialize($_) } @entries{@ids};
 }
 
 sub delete {
     my ( $self, @ids_or_entries ) = @_;
 
-    my @ids = map { ref($_) ? $_->id : $_ } @ids_or_entries;
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
 
-    if ( $self->extract ) {
-        # FIXME rely on cascade delete?
-        my $sth = $self->dbh->prepare_cached("DELETE FROM gin_index WHERE id IN (" . join(", ", ('?') x @ids) . ")");
+        my @ids = map { ref($_) ? $_->id : $_ } @ids_or_entries;
+
+        if ( $self->extract ) {
+            # FIXME rely on cascade delete?
+            my $sth = $dbh->prepare_cached("DELETE FROM gin_index WHERE id IN (" . join(", ", ('?') x @ids) . ")");
+            $sth->execute(@ids);
+            $sth->finish;
+        }
+
+        my $sth = $dbh->prepare_cached("DELETE FROM entries WHERE id IN (" . join(", ", ('?') x @ids) . ")");
         $sth->execute(@ids);
         $sth->finish;
-    }
-
-    my $sth = $self->dbh->prepare_cached("DELETE FROM entries WHERE id IN (" . join(", ", ('?') x @ids) . ")");
-    $sth->execute(@ids);
-    $sth->finish;
+    });
 
     return;
 }
@@ -380,27 +416,18 @@ sub exists {
 
     my %entries;
 
-    my $sth = $self->dbh->prepare_cached("SELECT id FROM entries WHERE id IN (" . join(", ", ('?') x @ids) . ")");
-    $sth->execute(@ids);
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
 
-    $sth->bind_columns( \( my $id ) );
+        my $sth = $dbh->prepare_cached("SELECT id FROM entries WHERE id IN (" . join(", ", ('?') x @ids) . ")");
+        $sth->execute(@ids);
 
-    $entries{$id} = undef while $sth->fetch;
+        $sth->bind_columns( \( my $id ) );
+
+        $entries{$id} = undef while $sth->fetch;
+    });
 
     map { exists $entries{$_} } @ids;
-}
-
-sub txn_do {
-    my ( $self, $code, %args ) = @_;
-
-    my @ret = eval { shift->storage->txn_do($code) };
-
-    if ( $@ ) {
-        if ( my $rb = $args{rollback} ) { $rb->() };
-        die $@;
-    }
-
-    return @ret;
 }
 
 sub txn_begin    { shift->storage->txn_begin(@_) }
@@ -410,35 +437,71 @@ sub txn_rollback { shift->storage->txn_rollback(@_) }
 sub clear {
     my $self = shift;
 
-    $self->dbh->do("DELETE FROM gin_index");
-    $self->dbh->do("DELETE FROM entries");
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
+
+        $dbh->do("DELETE FROM gin_index");
+        $dbh->do("DELETE FROM entries");
+    });
 }
 
-sub _select_stream {
+sub _sth_stream {
     my ( $self, $sql, @bind ) = @_;
 
-    my $sth = $self->dbh->prepare($sql); # can't prepare cached, we don't know when it will be done
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
+        my $sth = $dbh->prepare($sql); # can't prepare cached, we don't know when it will be done
 
-    $sth->execute(@bind);
+        $sth->execute(@bind);
 
-    my $stream = Data::Stream::Bulk::DBI->new( sth => $sth );
+        Data::Stream::Bulk::DBI->new( sth => $sth );
+    });
+}
+
+sub _select_entry_stream {
+    my ( $self, @args ) = @_;
+
+    my $stream = $self->_sth_stream(@args);
 
     return $stream->filter(sub { [ map { $self->deserialize($_->[0]) } @$_ ] });
 }
 
 sub all_entries {
     my $self = shift;
-    $self->_select_stream("SELECT data FROM entries");
+    $self->_select_entry_stream("SELECT data FROM entries");
 }
 
 sub root_entries {
     my $self = shift;
-    $self->_select_stream("SELECT data FROM entries WHERE root");
+    $self->_select_entry_stream("SELECT data FROM entries WHERE root");
 }
 
 sub child_entries {
     my $self = shift;
-    $self->_select_stream("SELECT data FROM entries WHERE not root");
+    $self->_select_entry_stream("SELECT data FROM entries WHERE not root");
+}
+
+sub _select_id_stream {
+    my ( $self, @args ) = @_;
+
+    my $stream = $self->_sth_stream(@args);
+
+    return $stream->filter(sub {[ map { $_->[0] } @$_ ]});
+}
+
+sub all_entry_ids {
+    my $self = shift;
+    $self->_select_id_stream("SELECT id FROM entries");
+}
+
+sub root_entry_ids {
+    my $self = shift;
+    $self->_select_id_stream("SELECT id FROM entries WHERE root");
+}
+
+sub child_entry_ids {
+    my $self = shift;
+    $self->_select_id_stream("SELECT id FROM entries WHERE not root");
 }
 
 sub simple_search {
@@ -446,7 +509,7 @@ sub simple_search {
 
     my ( $where_clause, @bind ) = $self->sql_abstract->where($proto);
 
-    $self->_select_stream("SELECT data FROM entries $where_clause", @bind);
+    $self->_select_entry_stream("SELECT data FROM entries $where_clause", @bind);
 }
 
 sub search {
@@ -463,14 +526,14 @@ sub search {
 
     if ( $spec{method} eq 'all' and @v > 1) {
         # for some reason count(id) = ? doesn't work
-        return $self->_select_stream("
+        return $self->_select_entry_stream("
             SELECT data FROM entries WHERE id IN (
                 SELECT id FROM gin_index WHERE value IN (" . join(", ", ('?') x @v) . ") GROUP BY id HAVING COUNT(id) = " . scalar(@v) . "
             )",
             @v
         );
     } else {
-        return $self->_select_stream("
+        return $self->_select_entry_stream("
             SELECT data FROM entries WHERE id IN (
                 SELECT DISTINCT id FROM gin_index WHERE value IN (" . join(", ", ('?') x @v) . ")
             )",
@@ -496,16 +559,32 @@ sub insert_entry {
 sub create_tables {
     my $self = shift;
 
-    unless ( @{ $self->dbh->table_info('', '', 'entries', 'TABLE')->fetchall_arrayref } ) {
-        $self->deploy({ producer_args => { mysql_version => 4.1 } });
-    }
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
+
+        unless ( @{ $dbh->table_info('', '', 'entries', 'TABLE')->fetchall_arrayref } ) {
+            $self->deploy({ producer_args => { mysql_version => 4.1 } });
+        }
+    });
 }
 
 sub drop_tables {
     my $self = shift;
 
-    $self->dbh->do("DROP TABLE gin_index");
-    $self->dbh->do("DROP TABLE entries");
+    $self->dbh_do(sub {
+        my ( $storage, $dbh ) = @_;
+
+        $dbh->do("DROP TABLE gin_index");
+        $dbh->do("DROP TABLE entries");
+    });
+}
+
+sub DEMOLISH {
+    my $self = shift;
+
+    if ( $self->has_storage ) {
+        $self->storage->disconnect;
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -523,8 +602,10 @@ KiokuDB::Backend::DBI - L<DBI> backend for L<KiokuDB>
 =head1 SYNOPSIS
 
     my $dir = KiokuDB->connect(
-        "dbi:SQLite:dbname=foo",
-        columns => [
+        "dbi:mysql:foo",
+        user     => "blah",
+        password => "moo',
+        columns  => [
             # specify extra columns for the 'entries' table
             # in the same format you pass to DBIC's add_columns
 
@@ -574,6 +655,56 @@ version), SQLite 3, and PostgresSQL 8.3.
 
 The SQL code is reasonably portable and should work with most databases. Binary
 column support is required when using the L<Storable> serializer.
+
+=head2 Transactions
+
+For reasons of performance and ease of use database vendors ship with read
+committed transaction isolation by default.
+
+This means that read locks are B<not> acquired when data is fetched from the
+database, allowing it to be updated by another writer. If the current
+transaction then updates the value it will be silently overwritten.
+
+IMHO this is a much bigger problem when the data is unstructured. This is
+because data is loaded and fetched in potentially smaller chunks, increasing
+the risk of phantom reads.
+
+Unfortunately enabling truly isolated transaction semantics means that
+C<txn_commit> may fail due to a lock contention, forcing you to repeat your
+transaction. Arguably this is more correct "read comitted", which can lead to
+race conditions.
+
+Enabling repeatable read or serializable transaction isolation prevents
+transactions from interfering with eachother, by ensuring all data reads are
+performed with a shared lock.
+
+For more information on isolation see
+L<http://en.wikipedia.org/wiki/Isolation_(computer_science)>
+
+=head3 SQLite
+
+SQLite provides serializable isolation by default.
+
+L<http://www.sqlite.org/pragma.html#pragma_read_uncommitted>
+
+=head2 MySQL
+
+MySQL provides read committed isolation by default.
+
+Serializable level isolation can be enabled by by default by changing the
+C<transaction-isolation> global variable,
+
+L<http://dev.mysql.com/doc/refman/5.1/en/set-transaction.html#isolevel_serializable>
+
+=head2 PostgreSQL
+
+PostgreSQL provides read committed isolation by default.
+
+Repeatable read or serializable isolation can be enabled by setting the default
+transaction isolation level, or using the C<SET TRANSACTION> SQL statement.
+
+L<http://www.postgresql.org/docs/8.3/interactive/transaction-iso.html>,
+L<http://www.postgresql.org/docs/8.3/interactive/runtime-config-client.html#GUC-DEFAULT-TRANSACTION-ISOLATION>
 
 =head1 ATTRIBUTES
 
