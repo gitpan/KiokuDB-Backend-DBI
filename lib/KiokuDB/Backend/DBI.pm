@@ -15,7 +15,7 @@ use SQL::Abstract;
 
 use namespace::clean -except => 'meta';
 
-our $VERSION = "0.07";
+our $VERSION = "0.08";
 
 with qw(
     KiokuDB::Backend
@@ -269,16 +269,12 @@ sub insert_rows {
         my ( $storage, $dbh ) = @_;
 
         if ( $self->extract ) {
-            foreach my $rows ( $insert, $update ) {
-                if ( my @ids = @{ $rows->{ids} || [] } ) {
-                    my $bind = join(', ', map { '?' } @ids);
+            if ( my @ids = map { @{ $_->{id} || [] } } $insert, $update ) {
+                my $del_gin_sth = $dbh->prepare_cached("DELETE FROM gin_index WHERE id IN (" . join(", ", ('?') x @ids) . ")");
 
-                    my $del_gin_sth = $dbh->prepare_cached("DELETE FROM gin_index WHERE id = ($bind)");
+                $del_gin_sth->execute(@ids);
 
-                    $del_gin_sth->execute(@ids);
-
-                    $del_gin_sth->finish;
-                }
+                $del_gin_sth->finish;
             }
         }
 
