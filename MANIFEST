@@ -1,11 +1,19 @@
 Changes
+lib/DBIx/Class/KiokuDB.pm
+lib/DBIx/Class/Schema/KiokuDB.pm
 lib/KiokuDB/Backend/DBI.pm
 lib/KiokuDB/Backend/DBI/Schema.pm
+lib/KiokuDB/Backend/DBI/Schema/EntryProxy.pm
+lib/KiokuDB/TypeMap/Entry/DBIC/ResultSet.pm
+lib/KiokuDB/TypeMap/Entry/DBIC/ResultSourceHandle.pm
+lib/KiokuDB/TypeMap/Entry/DBIC/Row.pm
+lib/KiokuDB/TypeMap/Entry/DBIC/Schema.pm
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
 t/01load.t
 t/basic.t
+t/dbic.t
 t/fixtures.t
 META.yml                                 Module meta-data (added by MakeMaker)
 SIGNATURE                                Public-key signature (added by MakeMaker)
