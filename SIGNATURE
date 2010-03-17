@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.55.
+signed via the Module::Signature module, version 0.61.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,20 +14,20 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 a61467b14ba854273e36e3c522f9503a0a30c529 Changes
+SHA1 881b72f79f6761b9bbb78bae39575babfea8bbc2 Changes
 SHA1 7e1922bf61279c822beaaaa66991e6b5923d4114 MANIFEST
 SHA1 190e9058eb9c6446a1a3f3ddf15b082f1ecde152 MANIFEST.SKIP
-SHA1 da711020f4a32d620124bd654a45c1842246e4c0 META.yml
+SHA1 197c35c53cee2b8f19dde525cbdc1f9f70ecdb33 META.yml
 SHA1 d558350d7fa4c42ebd93de1be6d15e00dad0e2a5 Makefile.PL
-SHA1 27c535abf8a37d2b4fee5757333479856d8e4e48 lib/KiokuDB/Backend/DBI.pm
-SHA1 cbf9c4e7930c65e3173cf3fbe9d9e3a325a070f5 lib/KiokuDB/Backend/DBI/Schema.pm
+SHA1 43457e976fd14996dcfd0b93451b52e6dc122890 lib/KiokuDB/Backend/DBI.pm
+SHA1 95f4353b356974ef971d50c3f89f7130c077d246 lib/KiokuDB/Backend/DBI/Schema.pm
 SHA1 5b59d940cc0e259e5f9723fe09f0a2a52ab71558 t/01load.t
 SHA1 a6acddeffcb58d30ea39cbf3db7c022ea5d11fa8 t/basic.t
-SHA1 9a7f20085627339efdaea417a527cc8142c10aff t/fixtures.t
+SHA1 6bc8f3523dd74779d7f2488d4ab209e39b330649 t/fixtures.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG/MacGPG2 v2.0.12 (Darwin)
 
-iEYEARECAAYFAksP6+YACgkQVCwRwOvSdBjxJgCePvmsqDYJmVwbFdDZwgoHIOY9
-YoMAoLDWESWdI2iUdRZ/ryzjJHyWhxzz
-=W377
+iEYEARECAAYFAkuhKlwACgkQVCwRwOvSdBgD7gCfSs3ZybEe29/fdT0+bQ1QkdaR
+ICIAn29C1SINaCQJrr7q8FoZ5cWNe6ci
+=LInd
 -----END PGP SIGNATURE-----
