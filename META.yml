@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               KiokuDB-Backend-DBI
-version:            1.11_01
+version:            1.11_02
 abstract:           ~
 author:  []
 license:            unknown
@@ -12,13 +12,14 @@ build_requires:
 requires:
     Data::Stream::Bulk:   0.07
     DBI:                  1.607
-    DBIx::Class:          0.08102
-    KiokuDB:              0.24
+    DBIx::Class:          0.08120
+    KiokuDB:              0.39
     Moose:                0
     MooseX::Types:        0.08
     MooseX::Types::Moose:  0
     Search::GIN:          0
     SQL::Abstract:        0
+    SQL::Translator:      0.11005
     Test::More:           0.88
     Test::TempDir:        0
     Test::use::ok:        0
