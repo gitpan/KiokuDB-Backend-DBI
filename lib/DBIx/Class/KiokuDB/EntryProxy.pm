@@ -1,4 +1,10 @@
 package DBIx::Class::KiokuDB::EntryProxy;
+BEGIN {
+  $DBIx::Class::KiokuDB::EntryProxy::AUTHORITY = 'cpan:NUFFIN';
+}
+BEGIN {
+  $DBIx::Class::KiokuDB::EntryProxy::VERSION = '1.11';
+}
 
 use strict;
 use warnings;

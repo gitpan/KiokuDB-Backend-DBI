@@ -1,4 +1,10 @@
 package KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle;
+BEGIN {
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle::AUTHORITY = 'cpan:NUFFIN';
+}
+BEGIN {
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle::VERSION = '1.11';
+}
 use Moose;
 
 use Scalar::Util qw(weaken refaddr);
@@ -22,6 +28,9 @@ sub compile {
                         return $collapser->make_entry(
                             %args,
                             data => undef,
+                            meta => {
+                                immortal => 1,
+                            },
                         );
                     } else {
                         croak("Referring to foreign DBIC schemas is unsupported");
@@ -37,7 +46,7 @@ sub compile {
 
             my $handle = $schema->source(substr($entry->id, length('dbic:schema:rs:')))->handle;
 
-            $linker->register_object( $entry => $handle );
+            $linker->register_object( $entry => $handle, immortal => 1 );
 
             return $handle;
         },

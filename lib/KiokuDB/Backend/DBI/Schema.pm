@@ -1,6 +1,12 @@
 #!/usr/bin/perl
 
 package KiokuDB::Backend::DBI::Schema;
+BEGIN {
+  $KiokuDB::Backend::DBI::Schema::AUTHORITY = 'cpan:NUFFIN';
+}
+BEGIN {
+  $KiokuDB::Backend::DBI::Schema::VERSION = '1.11';
+}
 use Moose;
 
 use namespace::clean -except => 'meta';

@@ -1,14 +1,15 @@
-0.11_02
-    - Dependency tweaks
-    - More docs
-    - pod fixes
-    - rename EntryProxy under DBIx::Class::KiokuDB::EntryProxy
+1.11
+    - Support for DBIx::Class integration (KiokuDB objects and DBIC rows can
+      point to each other, DBIC resultsets can be serialized in KiokuDB)
+    - All SQL operations that use placeholders now support limiting of the
+      number of placeholders, splitting the operation into batches (this is
+      enabled by default for SQLite which limits SQL statements to 999
+      placeholders) (Jason May)
+    - DBIx::Class::Optional::Dependencies now used in Makefile.PL to avoid
+      problems with 'create => 1'
 
-0.11_01
-    - DBIC schema integration
-    - FOR UPDATE added to SELECT queries on MySQL, PG and Oracle
-
-0.10
+1.10
+    - NOTE: this was supposed to be 0.10... oops
     - Added mysql_strict attribute, true by default, causes SQL's strict mode
       to be set
     - Now specifies 'longblob' instead of 'blob' as the type for the 'data'

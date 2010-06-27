@@ -1,12 +1,6 @@
 #!/usr/bin/perl
 
 package KiokuDB::Backend::DBI;
-BEGIN {
-  $KiokuDB::Backend::DBI::AUTHORITY = 'cpan:NUFFIN';
-}
-BEGIN {
-  $KiokuDB::Backend::DBI::VERSION = '1.11';
-}
 use Moose;
 
 use Moose::Util::TypeConstraints;
@@ -283,26 +277,7 @@ sub _build_sql_abstract {
     SQL::Abstract->new;
 }
 
-# use a Maybe so we can force undef in the builder
-has batch_size => (
-    isa => "Maybe[Int]",
-    is  => "ro",
-    lazy => 1,
-    builder => '_build_batch_size',
-);
-
-sub _build_batch_size {
-    my $self = shift;
-
-    if ($self->storage->sqlt_type eq 'SQLite') {
-        return 999;
-    } else {
-        return undef;
-    }
-}
-
-sub has_batch_size { defined shift->batch_size }
-
+<<<<<<< HEAD
 sub register_handle {
     my ( $self, $kiokudb ) = @_;
 
@@ -325,6 +300,28 @@ sub default_typemap {
     );
 }
 
+=======
+# use a Maybe so we can force undef in the builder
+has batch_size => (
+    isa => "Maybe[Int]",
+    is  => "ro",
+    lazy => 1,
+    builder => '_build_batch_size',
+);
+
+sub _build_batch_size {
+    my $self = shift;
+
+    if ($self->storage->sqlt_type eq 'SQLite') {
+        return 999;
+    } else {
+        return undef;
+    }
+}
+
+sub has_batch_size { defined shift->batch_size }
+
+>>>>>>> batch_size
 sub insert {
     my ( $self, @entries ) = @_;
 
@@ -422,7 +419,7 @@ sub insert_rows {
                 my $batch_size = $self->batch_size || scalar(@ids);
 
                 my @ids_copy = @ids;
-                while ( my @batch_ids = splice @ids_copy, 0, $batch_size ) {
+                while (my @batch_ids = splice @ids_copy, 0, $batch_size) {
                     my $del_gin_sth = $dbh->prepare_cached("DELETE FROM gin_index WHERE id IN (" . join(", ", ('?') x @batch_ids) . ")");
 
                     $del_gin_sth->execute(@batch_ids);
@@ -551,8 +548,6 @@ sub _group_dbic_keys {
 sub get {
     my ( $self, @rows_and_ids ) = @_;
 
-    return unless @rows_and_ids;
-
     my %entries;
 
     my ( $rows, $ids, $special ) = $self->_part_rows_and_ids(\@rows_and_ids);
@@ -561,25 +556,22 @@ sub get {
         $self->dbh_do(sub {
             my ( $storage, $dbh ) = @_;
 
-            my @ids_copy = @$ids;
+<<<<<<< HEAD
+            my $sth;
 
-            my $batch_size = $self->batch_size || scalar(@$ids);
+            $sth = $dbh->prepare_cached("SELECT id, data FROM entries WHERE id IN (" . join(", ", ('?') x @$ids) . ")");
+            $sth->execute(@$ids);
 
-            while ( my @batch_ids = splice(@ids_copy, 0, $batch_size) ) {
-                my $sth = $dbh->prepare_cached("SELECT id, data FROM entries WHERE id IN (" . join(", ", ('?') x @batch_ids) . ")");
-                $sth->execute(@batch_ids);
+            $sth->bind_columns( \my ( $id, $data ) );
 
-                $sth->bind_columns( \my ( $id, $data ) );
+            # not actually necessary but i'm keeping it around for reference:
+            #my ( $id, $data );
+            #use DBD::Pg qw(PG_BYTEA);
+            #$sth->bind_col(1, \$id);
+            #$sth->bind_col(2, \$data, { pg_type => PG_BYTEA });
 
-                # not actually necessary but i'm keeping it around for reference:
-                #my ( $id, $data );
-                #use DBD::Pg qw(PG_BYTEA);
-                #$sth->bind_col(1, \$id);
-                #$sth->bind_col(2, \$data, { pg_type => PG_BYTEA });
-
-                while ( $sth->fetch ) {
-                    $entries{$id} = $data;
-                }
+            while ( $sth->fetch ) {
+                $entries{$id} = $data;
             }
         });
     }
@@ -644,6 +636,36 @@ sub get {
                     );
                 }
             }
+=======
+        my @ids_copy = @ids;
+        my @batch_ids;
+        {
+            if ( @ids ) {
+
+                my $batch_size = $self->batch_size || scalar(@ids);
+
+                @batch_ids = splice(@ids_copy, 0, $batch_size);
+                $sth = $dbh->prepare_cached("SELECT id, data FROM entries WHERE id IN (" . join(", ", ('?') x @batch_ids) . ")");
+                $sth->execute(@batch_ids);
+            } else {
+                $sth = $dbh->prepare_cached("SELECT id, data FROM entries");
+                $sth->execute;
+            }
+
+            $sth->bind_columns( \my ( $id, $data ) );
+
+            # not actually necessary but i'm keeping it around for reference:
+            #my ( $id, $data );
+            #use DBD::Pg qw(PG_BYTEA);
+            #$sth->bind_col(1, \$id);
+            #$sth->bind_col(2, \$data, { pg_type => PG_BYTEA });
+
+            while ( $sth->fetch ) {
+                $entries{$id} = $data;
+            }
+            # crank some more if there are batches left
+            redo if @ids_copy;
+>>>>>>> batch_size
         }
     }
 
@@ -676,7 +698,7 @@ sub delete {
         my $batch_size = $self->batch_size || scalar(@ids);
 
         my @ids_copy = @ids;
-        while ( my @batch_ids = splice @ids_copy, 0, $batch_size ) {
+        while (my @batch_ids = splice @ids_copy, 0, $batch_size) {
             if ( $self->extract ) {
                 # FIXME rely on cascade delete?
                 my $sth = $dbh->prepare_cached("DELETE FROM gin_index WHERE id IN (" . join(", ", ('?') x @batch_ids) . ")");
@@ -704,21 +726,17 @@ sub exists {
 
     my ( $rows, $ids, $special ) = $self->_part_rows_and_ids(\@rows_and_ids);
 
+<<<<<<< HEAD
     if ( @$ids ) {
         $self->dbh_do(sub {
             my ( $storage, $dbh ) = @_;
 
-            my $batch_size = $self->batch_size || scalar(@$ids);
+            my $sth = $dbh->prepare_cached("SELECT id FROM entries WHERE id IN (" . join(", ", ('?') x @$ids) . ")");
+            $sth->execute(@$ids);
 
-            my @ids_copy = @$ids;
-            while ( my @batch_ids = splice @ids_copy, 0, $batch_size ) {
-                my $sth = $dbh->prepare_cached("SELECT id FROM entries WHERE id IN (" . join(", ", ('?') x @batch_ids) . ")");
-                $sth->execute(@batch_ids);
+            $sth->bind_columns( \( my $id ) );
 
-                $sth->bind_columns( \( my $id ) );
-
-                $entries{$id} = 1 while $sth->fetch;
-            }
+            $entries{$id} = 1 while $sth->fetch;
         });
     }
 
@@ -744,6 +762,20 @@ sub exists {
             @entries{@pk_to_id{@exists}} = ( (1) x @exists );
         }
     }
+=======
+        my $batch_size = $self->has_batch_size ? $self->batch_size : scalar(@ids);
+
+        my @ids_copy = @ids;
+        while (my @batch_ids = splice @ids_copy, 0, $batch_size) {
+            my $sth = $dbh->prepare_cached("SELECT id FROM entries WHERE id IN (" . join(", ", ('?') x @batch_ids) . ")");
+            $sth->execute(@batch_ids);
+
+            $sth->bind_columns( \( my $id ) );
+
+            $entries{$id} = undef while $sth->fetch;
+        }
+    });
+>>>>>>> batch_size
 
     for ( @$special ) {
         if ( $_ eq 'dbic:schema' ) {

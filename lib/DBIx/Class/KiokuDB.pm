@@ -1,4 +1,10 @@
 package DBIx::Class::KiokuDB;
+BEGIN {
+  $DBIx::Class::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
+}
+BEGIN {
+  $DBIx::Class::KiokuDB::VERSION = '1.11';
+}
 
 use strict;
 use warnings;
@@ -94,6 +100,8 @@ sub _kiokudb_id_to_object {
 
 sub _kiokudb_object_to_id {
     my ( $self, $object ) = @_;
+
+    confess unless ref $object;
 
     my $dir = $self->result_source->schema->kiokudb_handle;
 
@@ -252,5 +260,3 @@ L<KiokuDB> storage.
 Adds a check to ensure that all referenced L<KiokuDB> objects are in storage.
 
 =back
-
-

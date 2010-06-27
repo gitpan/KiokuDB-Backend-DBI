@@ -1,4 +1,10 @@
 package DBIx::Class::Schema::KiokuDB;
+BEGIN {
+  $DBIx::Class::Schema::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
+}
+BEGIN {
+  $DBIx::Class::Schema::KiokuDB::VERSION = '1.11';
+}
 
 use strict;
 use warnings;

@@ -1,4 +1,10 @@
 package KiokuDB::TypeMap::Entry::DBIC::Row;
+BEGIN {
+  $KiokuDB::TypeMap::Entry::DBIC::Row::AUTHORITY = 'cpan:NUFFIN';
+}
+BEGIN {
+  $KiokuDB::TypeMap::Entry::DBIC::Row::VERSION = '1.11';
+}
 use Moose;
 
 use JSON;
