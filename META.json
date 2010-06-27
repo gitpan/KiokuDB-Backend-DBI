@@ -16,7 +16,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "DBIx::Class::Optiona::Dependencies" : 0,
+            "DBIx::Class::Optional::Dependencies" : 0,
             "ExtUtils::MakeMaker" : "6.31"
          }
       },
@@ -89,7 +89,7 @@
          "web" : "http://github.com/nothingmuch/kiokudb-backend-dbi"
       }
    },
-   "version" : "1.11",
+   "version" : "1.12",
    "x_Dist_Zilla" : {
       "plugins" : [
          {

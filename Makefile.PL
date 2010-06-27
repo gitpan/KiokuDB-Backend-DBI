@@ -21,7 +21,7 @@ my %WriteMakefileArgs = (
     'ok' => '0'
   },
   'CONFIGURE_REQUIRES' => {
-    'DBIx::Class::Optiona::Dependencies' => '0',
+    'DBIx::Class::Optional::Dependencies' => '0',
     'ExtUtils::MakeMaker' => '6.31'
   },
   'DISTNAME' => 'KiokuDB-Backend-DBI',
@@ -67,7 +67,7 @@ my %WriteMakefileArgs = (
     'namespace::autoclean' => '0',
     'namespace::clean' => '0'
   },
-  'VERSION' => '1.11',
+  'VERSION' => '1.12',
   'test' => {
     'TESTS' => 't/*.t'
   }

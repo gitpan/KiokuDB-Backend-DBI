@@ -5,7 +5,7 @@ BEGIN {
   $KiokuDB::Backend::DBI::Schema::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::Backend::DBI::Schema::VERSION = '1.11';
+  $KiokuDB::Backend::DBI::Schema::VERSION = '1.12';
 }
 use Moose;
 
