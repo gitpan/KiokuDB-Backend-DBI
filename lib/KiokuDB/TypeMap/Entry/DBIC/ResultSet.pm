@@ -3,7 +3,7 @@ BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::ResultSet::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::TypeMap::Entry::DBIC::ResultSet::VERSION = '1.12';
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSet::VERSION = '1.13';
 }
 use Moose;
 

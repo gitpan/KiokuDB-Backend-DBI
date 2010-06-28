@@ -89,7 +89,7 @@
          "web" : "http://github.com/nothingmuch/kiokudb-backend-dbi"
       }
    },
-   "version" : "1.12",
+   "version" : "1.13",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
