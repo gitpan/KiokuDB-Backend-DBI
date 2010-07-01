@@ -5,7 +5,7 @@ BEGIN {
   $KiokuDB::Backend::DBI::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::Backend::DBI::VERSION = '1.13';
+  $KiokuDB::Backend::DBI::VERSION = '1.14';
 }
 use Moose;
 
@@ -178,11 +178,11 @@ has schema => (
     isa => "DBIx::Class::Schema",
     is  => "ro",
     lazy_build => 1,
-    init_arg => "actual_schema",
+    init_arg => "connected_schema",
     handles  => [qw(deploy kiokudb_entries_source_name)],
 );
 
-has schema_proto => (
+has _schema_proto => (
     isa => SchemaProto,
     is  => "ro",
     init_arg => "schema",
@@ -198,7 +198,7 @@ has schema_hook => (
 sub _build_schema {
     my $self = shift;
 
-    my $schema = $self->schema_proto->clone;
+    my $schema = $self->_schema_proto->clone;
 
     unless ( $schema->kiokudb_entries_source_name ) {
         $schema->define_kiokudb_schema( extra_entries_columns => $self->columns );

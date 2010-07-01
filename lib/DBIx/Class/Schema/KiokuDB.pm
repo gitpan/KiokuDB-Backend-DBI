@@ -3,7 +3,7 @@ BEGIN {
   $DBIx::Class::Schema::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $DBIx::Class::Schema::KiokuDB::VERSION = '1.13';
+  $DBIx::Class::Schema::KiokuDB::VERSION = '1.14';
 }
 
 use strict;
@@ -147,7 +147,7 @@ refer to arbitrary KiokuDB objects:
     package MyApp::DB::Result::Album;
     use base qw(DBIx::Class::Core);
 
-    __PACKAGE__>load_components(qw(KiokuDB));
+    __PACKAGE__->load_components(qw(KiokuDB));
 
     __PACKAGE__->table('album');
 
@@ -168,7 +168,7 @@ Connect to the DSN:
 
     my $dir = KiokuDB->connect(
         'dbi:SQLite:dbname=:memory:',
-        schema_proto => "MyApp::DB",
+        schema => "MyApp::DB",
         create => 1,
     );
 

@@ -3,7 +3,7 @@
    "author" : [
       "Yuval Kogman"
    ],
-   "dynamic_config" : 0,
+   "dynamic_config" : "1",
    "generated_by" : "Dist::Zilla version 4.101612, CPAN::Meta::Converter version 2.101610",
    "license" : [
       "perl_5"
@@ -89,7 +89,7 @@
          "web" : "http://github.com/nothingmuch/kiokudb-backend-dbi"
       }
    },
-   "version" : "1.13",
+   "version" : "1.14",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
@@ -217,6 +217,11 @@
             },
             "name" : "ConfigureRequires",
             "version" : "4.101612"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::InjectMeta",
+            "name" : "InjectMeta",
+            "version" : null
          },
          {
             "class" : "Dist::Zilla::Plugin::Prereq",

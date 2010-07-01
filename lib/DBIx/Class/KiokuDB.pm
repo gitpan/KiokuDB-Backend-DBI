@@ -3,7 +3,7 @@ BEGIN {
   $DBIx::Class::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $DBIx::Class::KiokuDB::VERSION = '1.13';
+  $DBIx::Class::KiokuDB::VERSION = '1.14';
 }
 
 use strict;

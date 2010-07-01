@@ -16,7 +16,7 @@ build_requires:
 configure_requires:
   DBIx::Class::Optional::Dependencies: 0
   ExtUtils::MakeMaker: 6.31
-dynamic_config: 0
+dynamic_config: 1
 generated_by: 'Dist::Zilla version 4.101612, CPAN::Meta::Converter version 2.101610'
 license: perl
 meta-spec:
@@ -65,7 +65,7 @@ resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=KiokuDB-Backend-DBI
   homepage: http://search.cpan.org/dist/KiokuDB-Backend-DBI
   repository: git://github.com/nothingmuch/kiokudb-backend-dbi.git
-version: 1.13
+version: 1.14
 x_Dist_Zilla:
   plugins:
     -
@@ -168,6 +168,10 @@ x_Dist_Zilla:
           type: requires
       name: ConfigureRequires
       version: 4.101612
+    -
+      class: Dist::Zilla::Plugin::InjectMeta
+      name: InjectMeta
+      version: ~
     -
       class: Dist::Zilla::Plugin::Prereq
       config:
