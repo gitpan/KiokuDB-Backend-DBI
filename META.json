@@ -65,7 +65,6 @@
          "requires" : {
             "DBD::SQLite" : 0,
             "DBI" : 0,
-            "KiokuDB" : 0,
             "KiokuDB::Test" : 0,
             "Search::GIN::Extract::Class" : 0,
             "Test::Exception" : 0,
@@ -89,7 +88,7 @@
          "web" : "http://github.com/nothingmuch/kiokudb-backend-dbi"
       }
    },
-   "version" : "1.14",
+   "version" : "1.15",
    "x_Dist_Zilla" : {
       "plugins" : [
          {

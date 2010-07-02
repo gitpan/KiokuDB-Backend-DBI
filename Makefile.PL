@@ -11,7 +11,6 @@ my %WriteMakefileArgs = (
   'BUILD_REQUIRES' => {
     'DBD::SQLite' => '0',
     'DBI' => '0',
-    'KiokuDB' => '0',
     'KiokuDB::Test' => '0',
     'Search::GIN::Extract::Class' => '0',
     'Test::Exception' => '0',
@@ -67,7 +66,7 @@ my %WriteMakefileArgs = (
     'namespace::autoclean' => '0',
     'namespace::clean' => '0'
   },
-  'VERSION' => '1.14',
+  'VERSION' => '1.15',
   'test' => {
     'TESTS' => 't/*.t'
   }

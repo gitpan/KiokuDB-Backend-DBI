@@ -19,6 +19,7 @@ lib/KiokuDB/TypeMap/Entry/DBIC/ResultSourceHandle.pm
 lib/KiokuDB/TypeMap/Entry/DBIC/Row.pm
 lib/KiokuDB/TypeMap/Entry/DBIC/Schema.pm
 t/01load.t
+t/autovivify_handle.t
 t/basic.t
 t/dbic.t
 t/fixtures.t

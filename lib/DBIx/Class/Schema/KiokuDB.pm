@@ -3,11 +3,13 @@ BEGIN {
   $DBIx::Class::Schema::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $DBIx::Class::Schema::KiokuDB::VERSION = '1.14';
+  $DBIx::Class::Schema::KiokuDB::VERSION = '1.15';
 }
 
 use strict;
 use warnings;
+
+use Carp qw(croak);
 
 use DBIx::Class::KiokuDB::EntryProxy;
 use DBIx::Class::ResultSource::Table;
@@ -20,13 +22,51 @@ use base qw(Class::Accessor::Grouped);
 
 __PACKAGE__->mk_group_accessors( inherited => "kiokudb_entries_source_name" );
 
-sub kiokudb_handle { shift->{kiokudb_handle} } # FIXME
+sub kiokudb_handle {
+    my $self = shift;
+
+    croak "Can't call kiokudb_handle on unconnected schema" unless ref $self;
+
+    unless ( $self->{kiokudb_handle} ) {
+        require KiokuDB;
+        require KiokuDB::Backend::DBI;
+
+        croak "Can't vivify KiokuDB handle without KiokuDB schema bits. " .
+              "Add __PACKAGE__->define_kiokudb_schema() to your schema class"
+                  unless $self->kiokudb_entries_source_name;
+
+        my $dir = KiokuDB->new(
+            backend => my $backend = KiokuDB::Backend::DBI->new(
+                connected_schema => $self,
+            ),
+        );
+
+        $backend->meta->get_attribute('schema')->_weaken_value($backend); # FIXME proper MOP api?
+
+        # not weak
+        $self->{kiokudb_handle} = $dir;
+    }
+
+    $self->{kiokudb_handle};
+}
 
 sub _kiokudb_handle {
     my ( $self, $handle ) = @_;
 
-    $self->{kiokudb_handle} = $handle;
-    weaken($self->{kiokudb_handle});
+    croak "Can't call _kiokudb_handle on unconnected schema" unless ref $self;
+
+    croak "Can't vivify KiokuDB handle without KiokuDB schema bits. " .
+          "Add __PACKAGE__->define_kiokudb_schema() to your schema class"
+              unless $self->kiokudb_entries_source_name;
+
+    if ( $self->{kiokudb_handle} ) {
+        if ( refaddr($self->{kiokudb_handle}) != refaddr($handle) ) {
+            croak "KiokuDB directory already registered";
+        }
+    } else {
+        $self->{kiokudb_handle} = $handle;
+        weaken($self->{kiokudb_handle});
+    }
 
     return $handle;
 }
@@ -189,6 +229,30 @@ Then you can freely refer to KiokuDB objects from your C<Album> class:
 
 This class provides the schema definition support code required for integrating
 an arbitrary L<DBIx::Class::Schema> with L<KiokuDB::Backend::DBI>.
+
+=head2 REUSING AN EXISTING DBIx::Class SCHEMA
+
+The example in the Synopis assumes that you want to first set up a
+L<KiokuDB> and than link that to some L<DBIx::Class> classes. Another
+use case is that you already have a configured L<DBIx::Class> Schema
+and want to tack L<KiokuDB> onto it.
+
+The trick here is to make sure to load the L<KiokuDB> schema using 
+C<< __PACKAGE__->define_kiokudb_schema() >> in your Schema class:
+
+    package MyApp::DB;
+    use base qw(DBIx::Class::Schema);
+
+    __PACKAGE__->load_components(qw(Schema::KiokuDB));
+    __PACKAGE__->define_kiokudb_schema();
+
+    __PAKCAGE__->load_namespaces;
+
+You can now get the L<KiokuDB> directory handle like so:
+
+    my $dir = $schema->kiokudb_handle;
+
+For a complete example take a look at F<t/autovivify_handle.t>.
 
 =head1 USAGE AND LIMITATIONS
 
