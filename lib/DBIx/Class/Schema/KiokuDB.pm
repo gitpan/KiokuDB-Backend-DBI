@@ -3,7 +3,7 @@ BEGIN {
   $DBIx::Class::Schema::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $DBIx::Class::Schema::KiokuDB::VERSION = '1.15';
+  $DBIx::Class::Schema::KiokuDB::VERSION = '1.16';
 }
 
 use strict;
@@ -14,7 +14,7 @@ use Carp qw(croak);
 use DBIx::Class::KiokuDB::EntryProxy;
 use DBIx::Class::ResultSource::Table;
 
-use Scalar::Util qw(weaken);
+use Scalar::Util qw(weaken refaddr);
 
 use namespace::clean;
 

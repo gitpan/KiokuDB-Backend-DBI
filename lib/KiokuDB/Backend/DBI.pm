@@ -5,7 +5,7 @@ BEGIN {
   $KiokuDB::Backend::DBI::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::Backend::DBI::VERSION = '1.15';
+  $KiokuDB::Backend::DBI::VERSION = '1.16';
 }
 use Moose;
 
@@ -887,24 +887,43 @@ sub search {
     );
 
     my %spec = $query->extract_values($self);
+    my @binds;
 
-    my @v = @{ $spec{values} };
+    my $inner_sql = $self->_search_gin_subquery(\%spec, \@binds);
+    return $self->_select_entry_stream("SELECT data FROM entries WHERE id IN ".$inner_sql,@binds);
+}
 
-    if ( $spec{method} eq 'all' and @v > 1) {
+sub _search_gin_subquery {
+    my ($self, $spec, $binds) = @_;
+
+    my @v = @{ $spec->{values} };
+    if ( $spec->{method} eq 'set' ) {
+        my $op = $spec->{operation};
+
+        die 'gin set query received bad operation'
+          unless $op =~ /^(UNION|INTERSECT|EXCEPT)$/i;
+
+        die 'gin set query missing subqueries'
+          unless ref $spec->{subqueries} eq 'ARRAY' &&
+            scalar @{ $spec->{subqueries} };
+
+        return "(".
+          (
+           join ' '.$op.' ',
+           map { $self->_search_gin_subquery($_, $binds) }
+           @{ $spec->{subqueries} }
+          ).")";
+
+    } elsif ( $spec->{method} eq 'all' and @v > 1) {
         # for some reason count(id) = ? doesn't work
-        return $self->_select_entry_stream("
-            SELECT data FROM entries WHERE id IN (
-                SELECT id FROM gin_index WHERE value IN (" . join(", ", ('?') x @v) . ") GROUP BY id HAVING COUNT(id) = " . scalar(@v) . "
-            )",
-            @v
-        );
+        push @$binds, @v;
+        return "( SELECT id FROM gin_index WHERE value IN ".
+          "(" . join(", ", ('?') x @v) . ")" .
+            "GROUP BY id HAVING COUNT(id) = " . scalar(@v). ")";
     } else {
-        return $self->_select_entry_stream("
-            SELECT data FROM entries WHERE id IN (
-                SELECT DISTINCT id FROM gin_index WHERE value IN (" . join(", ", ('?') x @v) . ")
-            )",
-            @v
-        );
+        push @$binds, @v;
+        return "( SELECT DISTINCT id FROM gin_index WHERE value IN ".
+          "(" . join(", ", ('?') x @v) . ") )";
     }
 }
 

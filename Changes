@@ -1,3 +1,6 @@
+1.16
+    - Adds support for Set GIN queries
+
 1.15
     - Constructing a KiokuDB directory handle is no longer mandatory, you can
       get it from the DBIC schema (domm, nothingmuch)
