@@ -88,7 +88,7 @@
          "web" : "http://github.com/nothingmuch/kiokudb-backend-dbi"
       }
    },
-   "version" : "1.16",
+   "version" : "1.17",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
@@ -134,11 +134,6 @@
          {
             "class" : "Dist::Zilla::Plugin::ShareDir",
             "name" : "@Filter/@Basic/ShareDir",
-            "version" : "4.200000"
-         },
-         {
-            "class" : "Dist::Zilla::Plugin::MakeMaker",
-            "name" : "@Filter/@Basic/MakeMaker",
             "version" : "4.200000"
          },
          {
@@ -205,6 +200,11 @@
             "class" : "Dist::Zilla::Plugin::AutoPrereqs",
             "name" : "@Filter/AutoPrereqs",
             "version" : "4.200000"
+         },
+         {
+            "class" : "inc::DBICOptionalDeps",
+            "name" : "=inc::DBICOptionalDeps",
+            "version" : null
          },
          {
             "class" : "Dist::Zilla::Plugin::Prereq",

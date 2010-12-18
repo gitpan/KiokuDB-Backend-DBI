@@ -64,7 +64,7 @@ resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=KiokuDB-Backend-DBI
   homepage: http://search.cpan.org/dist/KiokuDB-Backend-DBI
   repository: git://github.com/nothingmuch/kiokudb-backend-dbi.git
-version: 1.16
+version: 1.17
 x_Dist_Zilla:
   plugins:
     -
@@ -102,10 +102,6 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::ShareDir
       name: '@Filter/@Basic/ShareDir'
-      version: 4.200000
-    -
-      class: Dist::Zilla::Plugin::MakeMaker
-      name: '@Filter/@Basic/MakeMaker'
       version: 4.200000
     -
       class: Dist::Zilla::Plugin::Manifest
@@ -159,6 +155,10 @@ x_Dist_Zilla:
       class: Dist::Zilla::Plugin::AutoPrereqs
       name: '@Filter/AutoPrereqs'
       version: 4.200000
+    -
+      class: inc::DBICOptionalDeps
+      name: '=inc::DBICOptionalDeps'
+      version: ~
     -
       class: Dist::Zilla::Plugin::Prereq
       config:
