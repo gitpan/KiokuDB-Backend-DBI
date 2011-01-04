@@ -12,11 +12,15 @@ my %WriteMakefileArgs = (
     'DBD::SQLite' => '0',
     'DBI' => '0',
     'KiokuDB::Test' => '0',
+    'Search::GIN::Extract::Callback' => '0',
     'Search::GIN::Extract::Class' => '0',
+    'Search::GIN::Query::Manual' => '0',
+    'Search::GIN::Query::Set' => '0',
     'Test::Exception' => '0',
     'Test::More' => '0',
     'Test::TempDir' => '0',
     'YAML::XS' => '0',
+    'constant' => '0',
     'ok' => '0'
   },
   'CONFIGURE_REQUIRES' => {
@@ -66,7 +70,7 @@ my %WriteMakefileArgs = (
     'namespace::autoclean' => '0',
     'namespace::clean' => '0'
   },
-  'VERSION' => '1.17',
+  'VERSION' => '1.18',
   'test' => {
     'TESTS' => 't/*.t'
   }

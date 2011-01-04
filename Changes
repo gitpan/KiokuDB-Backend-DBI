@@ -1,3 +1,10 @@
+1.18
+    - Fix set subquery building. Bad use of parenthesis.
+    - Includes an actual test for the set query.
+
+1.17
+    - Small fix in release process
+
 1.16
     - Adds support for Set GIN queries
 
