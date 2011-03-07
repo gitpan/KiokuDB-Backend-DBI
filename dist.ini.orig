@@ -1,5 +1,9 @@
 name    = KiokuDB-Backend-DBI
-version = 1.19
+<<<<<<< HEAD
+version = 1.16
+=======
+version = 1.18
+>>>>>>> ruoso/master
 author  = Yuval Kogman
 license = Perl_5
 copyright_holder = Yuval Kogman, Infinity Interactive

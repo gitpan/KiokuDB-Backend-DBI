@@ -14,26 +14,28 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 8a208908426d71abc52e8437256898a077acb50f Changes
+SHA1 74eab2c8d237ee62e10575ff9481e142ff72ffe8 Changes
+SHA1 7a899b682b1c4c111a60a42ad5099fd72e4918dd Changes.orig
 SHA1 e43e1b973104cbc58b2e307077bc9a94be5af31d LICENSE
-SHA1 afb1597697bde63faae23b4f4bd48a1c64d56dfa MANIFEST
+SHA1 be110077e559dc049f3e6398d83c216ed980c5c0 MANIFEST
 SHA1 190e9058eb9c6446a1a3f3ddf15b082f1ecde152 MANIFEST.SKIP
-SHA1 03d962358bfbd75f60c3ce639bd7e18c1754e588 META.json
-SHA1 a81c84245a795fdfaa3c2e69ac736686c9bfc24f META.yml
-SHA1 57d4412dfe1cbee82da643c3853851e484c22894 Makefile.PL
-SHA1 7e76a3efb3571750d1f5ae0c808cb9b989eae829 README
-SHA1 956a2a3a374f33e6473a7f73001313ee134c1b08 dist.ini
+SHA1 3199f8ac26cf9ce08afd2a0ed974718263d4a46b META.json
+SHA1 13622a396cf0ee914b7d6587a6baa75eb5eebd9e META.yml
+SHA1 25306046f3e8f90f139c855121ca5ae37cd3ccd2 Makefile.PL
+SHA1 3a0f07e86d309016728fdb0d63d4eed1fa24f559 README
+SHA1 9f670c712fdfed5a8147572adcf6a4c4c8d59273 dist.ini
+SHA1 d9789a87e0f6e167e8445bb28ca1d54c5050c4ee dist.ini.orig
 SHA1 1c19b49084f6c9437dc599f2ad2ea2127c30757a examples/job_queue.pl
 SHA1 d134a679a19a37e16df75d5fab37424567209345 inc/DBICOptionalDeps.pm
-SHA1 ff3a5ba01394850acc0ab0adcf8da752764200b4 lib/DBIx/Class/KiokuDB.pm
-SHA1 15c2e135863585cfae74581d4cf70e43f92e9bc1 lib/DBIx/Class/KiokuDB/EntryProxy.pm
-SHA1 b0b5622baa38d21473e41e8942f4ff0fb01ef069 lib/DBIx/Class/Schema/KiokuDB.pm
-SHA1 5e5b9843c4bae8ae9a8a853326466879973815d5 lib/KiokuDB/Backend/DBI.pm
-SHA1 65ffe55b1151a2d03e8b40c5bf82a09faee7c2a5 lib/KiokuDB/Backend/DBI/Schema.pm
-SHA1 7ad24a73f1cfb2ed47edc885beaa28c72dc7fe15 lib/KiokuDB/TypeMap/Entry/DBIC/ResultSet.pm
-SHA1 10bd06b03345e86ac1aa3f69067d910c1b546f74 lib/KiokuDB/TypeMap/Entry/DBIC/ResultSource.pm
-SHA1 1bd3a23e146307762318088a45dfc88b129e66b5 lib/KiokuDB/TypeMap/Entry/DBIC/Row.pm
-SHA1 320aa07598d94ef0079b9175b281c14208d41ee1 lib/KiokuDB/TypeMap/Entry/DBIC/Schema.pm
+SHA1 83b183bb6b22759977ce2d86fd1e3371698a42b9 lib/DBIx/Class/KiokuDB.pm
+SHA1 f1fd88b967848de8ebcfd93fc4e25a937d174aa5 lib/DBIx/Class/KiokuDB/EntryProxy.pm
+SHA1 1cc8301b6420ab8eda3f9b9f5dcd23daf1910303 lib/DBIx/Class/Schema/KiokuDB.pm
+SHA1 20865c67331d4f5f0efa971c538968fdf03bf5fd lib/KiokuDB/Backend/DBI.pm
+SHA1 0644c0110621c6adc54704500934e7718574d68b lib/KiokuDB/Backend/DBI/Schema.pm
+SHA1 7def0e1e74f95afea66b84dd28a0babb565bc10a lib/KiokuDB/TypeMap/Entry/DBIC/ResultSet.pm
+SHA1 b5f10500052a3173913a42141388f548bbf2ac43 lib/KiokuDB/TypeMap/Entry/DBIC/ResultSource.pm
+SHA1 51dbb3aad0cc44580bbe9f08b10be10d61e992ef lib/KiokuDB/TypeMap/Entry/DBIC/Row.pm
+SHA1 6071e194f6909d15408ee96e461bcf454e97d3c0 lib/KiokuDB/TypeMap/Entry/DBIC/Schema.pm
 SHA1 5b59d940cc0e259e5f9723fe09f0a2a52ab71558 t/01load.t
 SHA1 e5b8df582436fb264bfde5da1dc75a1f6f08a2b8 t/autovivify_handle.t
 SHA1 c6d21998a55a7ffadd25e8fa2294db8d79ccbac3 t/basic.t
@@ -42,10 +44,11 @@ SHA1 4e0841483fd658cb48e783a91cdf4d31ce2d6ed5 t/fixtures.t
 SHA1 455d1dd1867212a665ad5ea4126b572411de300c t/release-no-tabs.t
 SHA1 9433c240fe590bc404ab68ff63984df763e347ed t/release-pod-coverage.t
 SHA1 b30cbdfaf935017c4568c0c91b242438cb87786e t/release-pod-syntax.t
+SHA1 eedc1f16cfb180cbd159f2e0e2056ce7940f5e34 t/set_query.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG/MacGPG2 v2.0.12 (Darwin)
 
-iEYEARECAAYFAk11GDMACgkQVCwRwOvSdBjxLgCfXjll5OedkABv9X95Uf1eG0hu
-9dEAnirExo7dgJHtjLS3ZVf4RG/ZDf2k
-=TqDo
+iEYEARECAAYFAk11VqwACgkQVCwRwOvSdBipcQCgmg7NigRA6ipqVYjptoTDP5Zw
+aFMAn3nf/r8elSw6e6XU6RKohbzSWeS8
+=vwn3
 -----END PGP SIGNATURE-----

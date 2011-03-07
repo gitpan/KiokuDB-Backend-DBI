@@ -1,9 +1,7 @@
-1.19
-	- Merge releases
-
-1.16 (NUFFIN)
+<<<<<<< HEAD
+1.16
     - Updated to support change in DBIC object hierarchy
-
+=======
 1.18
     - Fix set subquery building. Bad use of parenthesis.
     - Includes an actual test for the set query.
@@ -11,8 +9,9 @@
 1.17
     - Small fix in release process
 
-1.16 (DRUOSO)
+1.16
     - Adds support for Set GIN queries
+>>>>>>> ruoso/master
 
 1.15
     - Constructing a KiokuDB directory handle is no longer mandatory, you can

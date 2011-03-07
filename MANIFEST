@@ -1,4 +1,5 @@
 Changes
+Changes.orig
 LICENSE
 MANIFEST
 MANIFEST.SKIP
@@ -8,6 +9,7 @@ Makefile.PL
 README
 SIGNATURE
 dist.ini
+dist.ini.orig
 examples/job_queue.pl
 inc/DBICOptionalDeps.pm
 lib/DBIx/Class/KiokuDB.pm
@@ -27,3 +29,4 @@ t/fixtures.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+t/set_query.t
