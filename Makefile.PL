@@ -12,15 +12,11 @@ my %WriteMakefileArgs = (
     'DBD::SQLite' => '0',
     'DBI' => '0',
     'KiokuDB::Test' => '0',
-    'Search::GIN::Extract::Callback' => '0',
     'Search::GIN::Extract::Class' => '0',
-    'Search::GIN::Query::Manual' => '0',
-    'Search::GIN::Query::Set' => '0',
     'Test::Exception' => '0',
     'Test::More' => '0',
     'Test::TempDir' => '0',
     'YAML::XS' => '0',
-    'constant' => '0',
     'ok' => '0'
   },
   'CONFIGURE_REQUIRES' => {
@@ -35,7 +31,7 @@ my %WriteMakefileArgs = (
     'Carp' => '0',
     'Class::Accessor::Grouped' => '0',
     'DBI' => '1.607',
-    'DBIx::Class' => '0.08123',
+    'DBIx::Class' => '0.08127',
     'DBIx::Class::Core' => '0',
     'DBIx::Class::ResultSource::Table' => '0',
     'DBIx::Class::Schema' => '0',
@@ -61,7 +57,7 @@ my %WriteMakefileArgs = (
     'MooseX::Types::Moose' => '0',
     'SQL::Abstract' => '0',
     'Scalar::Util' => '0',
-    'Search::GIN' => '0.07',
+    'Search::GIN' => '0',
     'Search::GIN::Extract::Delegate' => '0',
     'Test::More' => '0.88',
     'Test::TempDir' => '0',
@@ -70,7 +66,7 @@ my %WriteMakefileArgs = (
     'namespace::autoclean' => '0',
     'namespace::clean' => '0'
   },
-  'VERSION' => '1.18',
+  'VERSION' => '1.16',
   'test' => {
     'TESTS' => 't/*.t'
   }
@@ -82,7 +78,7 @@ unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
   my $pp = $WriteMakefileArgs{PREREQ_PM};
   for my $mod ( keys %$br ) {
     if ( exists $pp->{$mod} ) {
-      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod}; 
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
     }
     else {
       $pp->{$mod} = $br->{$mod};

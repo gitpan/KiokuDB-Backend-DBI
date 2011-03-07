@@ -1,9 +1,9 @@
-package KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle;
+package KiokuDB::TypeMap::Entry::DBIC::ResultSource;
 BEGIN {
-  $KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle::AUTHORITY = 'cpan:NUFFIN';
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSource::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle::VERSION = '1.18';
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSource::VERSION = '1.16'; # TRIAL
 }
 use Moose;
 
@@ -44,16 +44,16 @@ sub compile {
 
             my $schema = $linker->backend->schema;
 
-            my $handle = $schema->source(substr($entry->id, length('dbic:schema:rs:')))->handle;
+            my $rs = $schema->source(substr($entry->id, length('dbic:schema:rs:')));
 
-            $linker->register_object( $entry => $handle, immortal => 1 );
+            $linker->register_object( $entry => $rs, immortal => 1 );
 
-            return $handle;
+            return $rs;
         },
         id_method => sub {
             my ( $self, $object ) = @_;
 
-            return 'dbic:schema:rs:' . $object->source_moniker;
+            return 'dbic:schema:rs:' . $object->source_name;
         },
         refresh_method => sub { },
         entry => $self,
@@ -74,8 +74,8 @@ __END__
 
 =head1 NAME
 
-KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle - L<KiokuDB::TypeMap::Entry>
-for L<DBIx::Class::ResultSourceHandle> objects.
+KiokuDB::TypeMap::Entry::DBIC::ResultSource - L<KiokuDB::TypeMap::Entry>
+for L<DBIx::Class::ResultSource> objects.
 
 =head1 DESCRIPTION
 

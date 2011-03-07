@@ -1,0 +1,51 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.66.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 8a208908426d71abc52e8437256898a077acb50f Changes
+SHA1 e43e1b973104cbc58b2e307077bc9a94be5af31d LICENSE
+SHA1 afb1597697bde63faae23b4f4bd48a1c64d56dfa MANIFEST
+SHA1 190e9058eb9c6446a1a3f3ddf15b082f1ecde152 MANIFEST.SKIP
+SHA1 7951078dddf2175e181cc536df345ef9475d013a META.json
+SHA1 98f59c610c069862bafcb1350ef840a7d0507cab META.yml
+SHA1 57d4412dfe1cbee82da643c3853851e484c22894 Makefile.PL
+SHA1 7e76a3efb3571750d1f5ae0c808cb9b989eae829 README
+SHA1 956a2a3a374f33e6473a7f73001313ee134c1b08 dist.ini
+SHA1 1c19b49084f6c9437dc599f2ad2ea2127c30757a examples/job_queue.pl
+SHA1 d134a679a19a37e16df75d5fab37424567209345 inc/DBICOptionalDeps.pm
+SHA1 27c03177d314d7b1b613bf9fde28c4b098c20cc3 lib/DBIx/Class/KiokuDB.pm
+SHA1 92d1287ff42d29ec22bbce0a133378ae60c28cfa lib/DBIx/Class/KiokuDB/EntryProxy.pm
+SHA1 ae744ae94db81e09f8874599a1f19f4ce4891852 lib/DBIx/Class/Schema/KiokuDB.pm
+SHA1 0dbe4b36138ea1af9aaf9d7831b4bdba4dd60013 lib/KiokuDB/Backend/DBI.pm
+SHA1 701a6174f7ada104d4818ce5729c1c3725a1e376 lib/KiokuDB/Backend/DBI/Schema.pm
+SHA1 a844c15471fe10d922705c41bacfe991c4742b01 lib/KiokuDB/TypeMap/Entry/DBIC/ResultSet.pm
+SHA1 31aee44664e9163f4b70826884d1d3208757a681 lib/KiokuDB/TypeMap/Entry/DBIC/ResultSource.pm
+SHA1 b961ed64e4c42f7374fad80ee55b4688fe0268c2 lib/KiokuDB/TypeMap/Entry/DBIC/Row.pm
+SHA1 027336a2a9b8a219a8ca4b17cb2ffc6fc536ea88 lib/KiokuDB/TypeMap/Entry/DBIC/Schema.pm
+SHA1 5b59d940cc0e259e5f9723fe09f0a2a52ab71558 t/01load.t
+SHA1 e5b8df582436fb264bfde5da1dc75a1f6f08a2b8 t/autovivify_handle.t
+SHA1 c6d21998a55a7ffadd25e8fa2294db8d79ccbac3 t/basic.t
+SHA1 73708a0631e4bfccafc57211dd8db58f2edb0893 t/dbic.t
+SHA1 4e0841483fd658cb48e783a91cdf4d31ce2d6ed5 t/fixtures.t
+SHA1 455d1dd1867212a665ad5ea4126b572411de300c t/release-no-tabs.t
+SHA1 9433c240fe590bc404ab68ff63984df763e347ed t/release-pod-coverage.t
+SHA1 b30cbdfaf935017c4568c0c91b242438cb87786e t/release-pod-syntax.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.12 (Darwin)
+
+iEYEARECAAYFAk11DEkACgkQVCwRwOvSdBgs7QCeLdA29sYrfTNLfI4RdMtEnRWe
+zYMAn0Zr8YFceOsAcWzn2XiF9nrXwsdn
+=4TGN
+-----END PGP SIGNATURE-----

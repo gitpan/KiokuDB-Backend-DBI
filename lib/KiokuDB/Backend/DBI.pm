@@ -5,7 +5,7 @@ BEGIN {
   $KiokuDB::Backend::DBI::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::Backend::DBI::VERSION = '1.18';
+  $KiokuDB::Backend::DBI::VERSION = '1.16'; # TRIAL
 }
 use Moose;
 
@@ -26,7 +26,7 @@ use Scalar::Util qw(weaken refaddr);
 use KiokuDB::Backend::DBI::Schema;
 use KiokuDB::TypeMap;
 use KiokuDB::TypeMap::Entry::DBIC::Row;
-use KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle;
+use KiokuDB::TypeMap::Entry::DBIC::ResultSource;
 use KiokuDB::TypeMap::Entry::DBIC::ResultSet;
 use KiokuDB::TypeMap::Entry::DBIC::Schema;
 
@@ -335,14 +335,14 @@ sub default_typemap {
     KiokuDB::TypeMap->new(
         isa_entries => {
             # redirect to schema row
-            'DBIx::Class::Row'                => KiokuDB::TypeMap::Entry::DBIC::Row->new,
+            'DBIx::Class::Row'          => KiokuDB::TypeMap::Entry::DBIC::Row->new,
 
             # actual serialization
-            'DBIx::Class::ResultSet'          => KiokuDB::TypeMap::Entry::DBIC::ResultSet->new,
+            'DBIx::Class::ResultSet'    => KiokuDB::TypeMap::Entry::DBIC::ResultSet->new,
 
             # fake, the entries never get written to the db
-            'DBIx::Class::ResultSourceHandle' => KiokuDB::TypeMap::Entry::DBIC::ResultSourceHandle->new,
-            'DBIx::Class::Schema'             => KiokuDB::TypeMap::Entry::DBIC::Schema->new,
+            'DBIx::Class::ResultSource' => KiokuDB::TypeMap::Entry::DBIC::ResultSource->new,
+            'DBIx::Class::Schema'       => KiokuDB::TypeMap::Entry::DBIC::Schema->new,
         },
     );
 }
@@ -690,7 +690,7 @@ sub get {
                 ? ( data => $self->schema,
                     class => "DBIx::Class::Schema" )
                 : ( data => undef,
-                    class => "DBIx::Class::ResultSourceHandle" )
+                    class => "DBIx::Class::ResultSource" )
         );
     }
 
@@ -887,43 +887,24 @@ sub search {
     );
 
     my %spec = $query->extract_values($self);
-    my @binds;
 
-    my $inner_sql = $self->_search_gin_subquery(\%spec, \@binds);
-    return $self->_select_entry_stream("SELECT data FROM entries WHERE id IN (".$inner_sql.")",@binds);
-}
+    my @v = @{ $spec{values} };
 
-sub _search_gin_subquery {
-    my ($self, $spec, $binds) = @_;
-
-    my @v = ref $spec->{values} eq 'ARRAY' ? @{ $spec->{values} } : ();
-    if ( $spec->{method} eq 'set' ) {
-        my $op = $spec->{operation};
-
-        die 'gin set query received bad operation'
-          unless $op =~ /^(UNION|INTERSECT|EXCEPT)$/i;
-
-        die 'gin set query missing subqueries'
-          unless ref $spec->{subqueries} eq 'ARRAY' &&
-            scalar @{ $spec->{subqueries} };
-
-        return "(".
-          (
-           join ' '.$op.' ',
-           map { $self->_search_gin_subquery($_, $binds) }
-           @{ $spec->{subqueries} }
-          ).")";
-
-    } elsif ( $spec->{method} eq 'all' and @v > 1) {
+    if ( $spec{method} eq 'all' and @v > 1) {
         # for some reason count(id) = ? doesn't work
-        push @$binds, @v;
-        return "SELECT id FROM gin_index WHERE value IN ".
-          "(" . join(", ", ('?') x @v) . ")" .
-            "GROUP BY id HAVING COUNT(id) = " . scalar(@v);
+        return $self->_select_entry_stream("
+            SELECT data FROM entries WHERE id IN (
+                SELECT id FROM gin_index WHERE value IN (" . join(", ", ('?') x @v) . ") GROUP BY id HAVING COUNT(id) = " . scalar(@v) . "
+            )",
+            @v
+        );
     } else {
-        push @$binds, @v;
-        return "SELECT DISTINCT id FROM gin_index WHERE value IN ".
-          "(" . join(", ", ('?') x @v) . ")";
+        return $self->_select_entry_stream("
+            SELECT data FROM entries WHERE id IN (
+                SELECT DISTINCT id FROM gin_index WHERE value IN (" . join(", ", ('?') x @v) . ")
+            )",
+            @v
+        );
     }
 }
 
