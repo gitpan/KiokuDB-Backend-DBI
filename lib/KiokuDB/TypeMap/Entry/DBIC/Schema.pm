@@ -3,7 +3,7 @@ BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::Schema::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::TypeMap::Entry::DBIC::Schema::VERSION = '1.19';
+  $KiokuDB::TypeMap::Entry::DBIC::Schema::VERSION = '1.20';
 }
 use Moose;
 
@@ -84,3 +84,11 @@ The ID of the schema is always C<dbic:schema>.
 References to L<DBIx::Class::Schema> objects which are not a part of the
 underlying L<DBIx::Class> layout are currently not supported, but may be in the
 future.
+
+=begin Pod::Coverage
+
+compile
+
+=end Pod::Coverage
+
+=cut

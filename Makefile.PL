@@ -3,7 +3,7 @@
 
 use strict;
 use warnings;
-use ExtUtils::MakeMaker 6.31;
+use ExtUtils::MakeMaker 6.30;
 
 my %WriteMakefileArgs = (
   'ABSTRACT' => 'L<DBI> backend for L<KiokuDB>',
@@ -25,7 +25,7 @@ my %WriteMakefileArgs = (
   },
   'CONFIGURE_REQUIRES' => {
     'DBIx::Class::Optional::Dependencies' => '0',
-    'ExtUtils::MakeMaker' => '6.31'
+    'ExtUtils::MakeMaker' => '6.30'
   },
   'DISTNAME' => 'KiokuDB-Backend-DBI',
   'EXE_FILES' => [],
@@ -70,7 +70,7 @@ my %WriteMakefileArgs = (
     'namespace::autoclean' => '0',
     'namespace::clean' => '0'
   },
-  'VERSION' => '1.19',
+  'VERSION' => '1.20',
   'test' => {
     'TESTS' => 't/*.t'
   }

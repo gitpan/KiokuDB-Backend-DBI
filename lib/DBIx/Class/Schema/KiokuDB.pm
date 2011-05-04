@@ -3,7 +3,7 @@ BEGIN {
   $DBIx::Class::Schema::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $DBIx::Class::Schema::KiokuDB::VERSION = '1.19';
+  $DBIx::Class::Schema::KiokuDB::VERSION = '1.20';
 }
 
 use strict;
@@ -139,7 +139,7 @@ sub define_kiokudb_gin_index_resultsource {
         value => { data_type => "varchar" },
     );
 
-    $gin_index->add_relationship('entry_ids', $args{entries_source}, { 'foreign.id' => 'me.id' });
+    $gin_index->add_relationship('entry_ids', $args{entries_source}, { 'foreign.id' => 'self.id' });
 
     $gin_index->sqlt_deploy_callback(sub {
         my ($source, $sqlt_table) = @_;
@@ -237,7 +237,7 @@ L<KiokuDB> and than link that to some L<DBIx::Class> classes. Another
 use case is that you already have a configured L<DBIx::Class> Schema
 and want to tack L<KiokuDB> onto it.
 
-The trick here is to make sure to load the L<KiokuDB> schema using 
+The trick here is to make sure to load the L<KiokuDB> schema using
 C<< __PACKAGE__->define_kiokudb_schema() >> in your Schema class:
 
     package MyApp::DB;
@@ -274,3 +274,14 @@ L<DBIx::Class>.
 =head1 SEE ALSO
 
 L<DBIx::Class::KiokuDB>, L<KiokuDB::Backend::DBI>.
+
+=begin Pod::Coverage
+
+define_kiokudb_entries_resultsource
+define_kiokudb_gin_index_resultsource
+define_kiokudb_schema
+kiokudb_handle
+
+=end Pod::Coverage
+
+=cut

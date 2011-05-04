@@ -3,7 +3,7 @@ BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::ResultSet::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::TypeMap::Entry::DBIC::ResultSet::VERSION = '1.19';
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSet::VERSION = '1.20';
 }
 use Moose;
 
@@ -54,3 +54,11 @@ The result set is cloned, the clone will have its cache cleared, and then it is
 simply serialized normally. This is the only L<DBIx::Class> related object that
 is literally stored in the database, as it represents a memory resident object,
 not a database resident one.
+
+=begin Pod::Coverage
+
+compile_collapse_body
+
+=end Pod::Coverage
+
+=cut

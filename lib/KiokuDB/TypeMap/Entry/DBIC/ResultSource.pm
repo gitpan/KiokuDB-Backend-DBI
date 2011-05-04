@@ -3,6 +3,12 @@ BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::ResultSource::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSource::VERSION = '1.20';
+}
+BEGIN {
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSource::AUTHORITY = 'cpan:NUFFIN';
+}
+BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::ResultSource::VERSION = '1.19';
 }
 use Moose;
@@ -89,3 +95,11 @@ and are not actually written to storage.
 
 Looking up such an ID causes the backend to dynamically search for such a
 resultset in the L<DBIx::Class::Schema>.
+
+=begin Pod::Coverage
+
+compile
+
+=end Pod::Coverage
+
+=cut

@@ -5,7 +5,7 @@ BEGIN {
   $KiokuDB::Backend::DBI::AUTHORITY = 'cpan:NUFFIN';
 }
 BEGIN {
-  $KiokuDB::Backend::DBI::VERSION = '1.19';
+  $KiokuDB::Backend::DBI::VERSION = '1.20';
 }
 use Moose;
 
@@ -460,7 +460,7 @@ sub insert_rows {
             }
         }
 
-        my $bind_attributes = $self->storage->source_bind_attributes($self->schema->source("entries"));
+        my $colinfo = $self->schema->source('entries')->columns_info;
 
         my %rows = ( insert => $insert, update => $update );
 
@@ -473,9 +473,9 @@ sub insert_rows {
             foreach my $column_name (@cols) {
                 my $attributes = {};
 
-                if( $bind_attributes ) {
-                    $attributes = $bind_attributes->{$column_name}
-                    if defined $bind_attributes->{$column_name};
+                if ( exists $colinfo->{$column_name} ) {
+                    my $dt = $colinfo->{$column_name}{data_type};
+                    $attributes = $self->storage->bind_attribute_by_data_type($dt);
                 }
 
                 $sth->bind_param_array( $i, $rows{$op}->{$column_name}, $attributes );
@@ -988,6 +988,7 @@ sub drop_tables {
 
 sub DEMOLISH {
     my $self = shift;
+    return if $_[0];
 
     if ( $self->has_storage ) {
         $self->storage->disconnect;
@@ -1314,5 +1315,44 @@ Yuval Kogman E<lt>nothingmuch@woobling.orgE<gt>
     Copyright (c) 2008, 2009 Yuval Kogman, Infinity Interactive. All
     rights reserved This program is free software; you can redistribute
     it and/or modify it under the same terms as Perl itself.
+
+=begin Pod::Coverage
+
+BUILD
+DEMOLISH
+all_entries
+all_entry_ids
+child_entries
+child_entry_ids
+clear
+create_tables
+default_typemap
+delete
+entries_to_rows
+entry_to_row
+exists
+fetch_entry
+has_batch_size
+insert
+insert_entry
+insert_rows
+new_from_dsn
+new_garbage_collector
+prepare_insert
+prepare_select
+prepare_update
+register_handle
+remove_ids
+root_entries
+root_entry_ids
+search
+simple_search
+tables_exist
+txn_begin
+txn_commit
+txn_rollback
+update_index
+
+=end Pod::Coverage
 
 =cut

@@ -1,5 +1,4 @@
 Changes
-Changes.orig
 LICENSE
 MANIFEST
 MANIFEST.SKIP
@@ -7,11 +6,10 @@ META.json
 META.yml
 Makefile.PL
 README
-SIGNATURE
 dist.ini
-dist.ini.orig
 examples/job_queue.pl
 inc/DBICOptionalDeps.pm
+inc/DistMeta.pm
 lib/DBIx/Class/KiokuDB.pm
 lib/DBIx/Class/KiokuDB/EntryProxy.pm
 lib/DBIx/Class/Schema/KiokuDB.pm
@@ -26,6 +24,7 @@ t/autovivify_handle.t
 t/basic.t
 t/dbic.t
 t/fixtures.t
+t/release-eol.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
