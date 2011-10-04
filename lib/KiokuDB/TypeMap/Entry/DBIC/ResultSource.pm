@@ -2,8 +2,8 @@ package KiokuDB::TypeMap::Entry::DBIC::ResultSource;
 BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::ResultSource::AUTHORITY = 'cpan:NUFFIN';
 }
-BEGIN {
-  $KiokuDB::TypeMap::Entry::DBIC::ResultSource::VERSION = '1.20';
+{
+  $KiokuDB::TypeMap::Entry::DBIC::ResultSource::VERSION = '1.21';
 }
 BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::ResultSource::AUTHORITY = 'cpan:NUFFIN';

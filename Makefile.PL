@@ -67,10 +67,13 @@ my %WriteMakefileArgs = (
     'Test::TempDir' => '0',
     'Test::use::ok' => '0',
     'Try::Tiny' => '0',
+    'base' => '0',
     'namespace::autoclean' => '0',
-    'namespace::clean' => '0'
+    'namespace::clean' => '0',
+    'strict' => '0',
+    'warnings' => '0'
   },
-  'VERSION' => '1.20',
+  'VERSION' => '1.21',
   'test' => {
     'TESTS' => 't/*.t'
   }

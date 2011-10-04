@@ -1,3 +1,6 @@
+1.21
+    - Fix undocumented gin_index option to define_kiokudb_schema (frew)
+
 1.20
     - Fix some stuff with recent DBIx::Class (arcanez)
 

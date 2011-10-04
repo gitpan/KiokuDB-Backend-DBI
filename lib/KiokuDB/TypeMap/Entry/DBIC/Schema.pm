@@ -2,8 +2,8 @@ package KiokuDB::TypeMap::Entry::DBIC::Schema;
 BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::Schema::AUTHORITY = 'cpan:NUFFIN';
 }
-BEGIN {
-  $KiokuDB::TypeMap::Entry::DBIC::Schema::VERSION = '1.20';
+{
+  $KiokuDB::TypeMap::Entry::DBIC::Schema::VERSION = '1.21';
 }
 use Moose;
 

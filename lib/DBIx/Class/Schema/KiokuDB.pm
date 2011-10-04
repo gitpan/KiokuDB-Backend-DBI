@@ -2,8 +2,8 @@ package DBIx::Class::Schema::KiokuDB;
 BEGIN {
   $DBIx::Class::Schema::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
-BEGIN {
-  $DBIx::Class::Schema::KiokuDB::VERSION = '1.20';
+{
+  $DBIx::Class::Schema::KiokuDB::VERSION = '1.21';
 }
 
 use strict;
@@ -87,12 +87,15 @@ sub define_kiokudb_schema {
     my $gin_index_source_name = $args{gin_index_source} ||= $args{gin_index_table};
 
     my $entries = $self->define_kiokudb_entries_resultsource(%args);
-    my $gin_index = $self->define_kiokudb_gin_index_resultsource(%args) if $args{gin_index};
 
     my $schema = $args{schema};
 
     $schema->register_source( $entries_source_name   => $entries );
-    $schema->register_source( $gin_index_source_name => $gin_index );
+    if ($args{gin_index}) {
+        my $gin_index = $self->define_kiokudb_gin_index_resultsource(%args);
+        $schema->register_source( $gin_index_source_name => $gin_index );
+    }
+
 
     $schema->kiokudb_entries_source_name($entries_source_name)
         unless $schema->kiokudb_entries_source_name;

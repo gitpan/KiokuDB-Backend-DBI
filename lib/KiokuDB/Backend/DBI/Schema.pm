@@ -4,8 +4,8 @@ package KiokuDB::Backend::DBI::Schema;
 BEGIN {
   $KiokuDB::Backend::DBI::Schema::AUTHORITY = 'cpan:NUFFIN';
 }
-BEGIN {
-  $KiokuDB::Backend::DBI::Schema::VERSION = '1.20';
+{
+  $KiokuDB::Backend::DBI::Schema::VERSION = '1.21';
 }
 use Moose;
 
