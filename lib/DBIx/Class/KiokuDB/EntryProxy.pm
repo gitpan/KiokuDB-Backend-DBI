@@ -3,7 +3,7 @@ BEGIN {
   $DBIx::Class::KiokuDB::EntryProxy::AUTHORITY = 'cpan:NUFFIN';
 }
 {
-  $DBIx::Class::KiokuDB::EntryProxy::VERSION = '1.21';
+  $DBIx::Class::KiokuDB::EntryProxy::VERSION = '1.22';
 }
 
 use strict;

@@ -4,7 +4,7 @@
       "Yuval Kogman"
    ],
    "dynamic_config" : "1",
-   "generated_by" : "Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.110440",
+   "generated_by" : "Dist::Zilla version 4.300020, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -16,69 +16,70 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "DBIx::Class::Optional::Dependencies" : 0,
+            "DBIx::Class::Optional::Dependencies" : "0",
             "ExtUtils::MakeMaker" : "6.30"
          }
       },
       "runtime" : {
          "requires" : {
-            "Carp" : 0,
-            "Class::Accessor::Grouped" : 0,
+            "Carp" : "0",
+            "Class::Accessor::Grouped" : "0",
             "DBI" : "1.607",
             "DBIx::Class" : "0.08127",
-            "DBIx::Class::Core" : 0,
-            "DBIx::Class::ResultSource::Table" : 0,
-            "DBIx::Class::Schema" : 0,
+            "DBIx::Class::Core" : "0",
+            "DBIx::Class::ResultSource::Table" : "0",
+            "DBIx::Class::Schema" : "0",
             "Data::Stream::Bulk" : "0.07",
-            "Data::Stream::Bulk::DBI" : 0,
-            "JSON" : 0,
+            "Data::Stream::Bulk::DBI" : "0",
+            "JSON" : "0",
             "KiokuDB" : "0.46",
-            "KiokuDB::Backend" : 0,
-            "KiokuDB::Backend::Role::Clear" : 0,
-            "KiokuDB::Backend::Role::Concurrency::POSIX" : 0,
-            "KiokuDB::Backend::Role::GC" : 0,
-            "KiokuDB::Backend::Role::Query::GIN" : 0,
-            "KiokuDB::Backend::Role::Query::Simple" : 0,
-            "KiokuDB::Backend::Role::Scan" : 0,
-            "KiokuDB::Backend::Role::TXN" : 0,
-            "KiokuDB::Backend::Serialize::Delegate" : 0,
-            "KiokuDB::TypeMap" : 0,
-            "KiokuDB::TypeMap::Entry" : 0,
-            "KiokuDB::TypeMap::Entry::Naive" : 0,
-            "Moose" : 0,
-            "Moose::Util::TypeConstraints" : 0,
+            "KiokuDB::Backend" : "0",
+            "KiokuDB::Backend::Role::Clear" : "0",
+            "KiokuDB::Backend::Role::Concurrency::POSIX" : "0",
+            "KiokuDB::Backend::Role::GC" : "0",
+            "KiokuDB::Backend::Role::Query::GIN" : "0",
+            "KiokuDB::Backend::Role::Query::Simple" : "0",
+            "KiokuDB::Backend::Role::Scan" : "0",
+            "KiokuDB::Backend::Role::TXN" : "0",
+            "KiokuDB::Backend::Serialize::Delegate" : "0",
+            "KiokuDB::TypeMap" : "0",
+            "KiokuDB::TypeMap::Entry" : "0",
+            "KiokuDB::TypeMap::Entry::Naive" : "0",
+            "List::MoreUtils" : "0",
+            "Moose" : "0",
+            "Moose::Util::TypeConstraints" : "0",
             "MooseX::Types" : "0.08",
-            "MooseX::Types::Moose" : 0,
-            "SQL::Abstract" : 0,
-            "Scalar::Util" : 0,
+            "MooseX::Types::Moose" : "0",
+            "SQL::Abstract" : "0",
+            "Scalar::Util" : "0",
             "Search::GIN" : "0.07",
-            "Search::GIN::Extract::Delegate" : 0,
+            "Search::GIN::Extract::Delegate" : "0",
             "Test::More" : "0.88",
-            "Test::TempDir" : 0,
-            "Test::use::ok" : 0,
-            "Try::Tiny" : 0,
-            "base" : 0,
-            "namespace::autoclean" : 0,
-            "namespace::clean" : 0,
-            "strict" : 0,
-            "warnings" : 0
+            "Test::TempDir" : "0",
+            "Test::use::ok" : "0",
+            "Try::Tiny" : "0",
+            "base" : "0",
+            "namespace::autoclean" : "0",
+            "namespace::clean" : "0",
+            "strict" : "0",
+            "warnings" : "0"
          }
       },
       "test" : {
          "requires" : {
-            "DBD::SQLite" : 0,
-            "DBI" : 0,
-            "KiokuDB::Test" : 0,
-            "Search::GIN::Extract::Callback" : 0,
-            "Search::GIN::Extract::Class" : 0,
-            "Search::GIN::Query::Manual" : 0,
-            "Search::GIN::Query::Set" : 0,
-            "Test::Exception" : 0,
-            "Test::More" : 0,
-            "Test::TempDir" : 0,
-            "YAML::XS" : 0,
-            "constant" : 0,
-            "ok" : 0
+            "DBD::SQLite" : "0",
+            "DBI" : "0",
+            "KiokuDB::Test" : "0",
+            "Search::GIN::Extract::Callback" : "0",
+            "Search::GIN::Extract::Class" : "0",
+            "Search::GIN::Query::Manual" : "0",
+            "Search::GIN::Query::Set" : "0",
+            "Test::Exception" : "0",
+            "Test::More" : "0",
+            "Test::TempDir" : "0",
+            "YAML::XS" : "0",
+            "constant" : "0",
+            "ok" : "0"
          }
       }
    },
@@ -95,93 +96,93 @@
          "web" : "http://github.com/nothingmuch/kiokudb-backend-dbi"
       }
    },
-   "version" : "1.21",
+   "version" : "1.22",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
             "class" : "Dist::Zilla::Plugin::GatherDir",
             "name" : "@Filter/@Basic/GatherDir",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::PruneCruft",
             "name" : "@Filter/@Basic/PruneCruft",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::ManifestSkip",
             "name" : "@Filter/@Basic/ManifestSkip",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaYAML",
             "name" : "@Filter/@Basic/MetaYAML",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::License",
             "name" : "@Filter/@Basic/License",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::Readme",
             "name" : "@Filter/@Basic/Readme",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::ExtraTests",
             "name" : "@Filter/@Basic/ExtraTests",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::ExecDir",
             "name" : "@Filter/@Basic/ExecDir",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::ShareDir",
             "name" : "@Filter/@Basic/ShareDir",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::Manifest",
             "name" : "@Filter/@Basic/Manifest",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::TestRelease",
             "name" : "@Filter/@Basic/TestRelease",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::ConfirmRelease",
             "name" : "@Filter/@Basic/ConfirmRelease",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::UploadToCPAN",
             "name" : "@Filter/@Basic/UploadToCPAN",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaConfig",
             "name" : "@Filter/MetaConfig",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaJSON",
             "name" : "@Filter/MetaJSON",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::PkgVersion",
             "name" : "@Filter/PkgVersion",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::PodSyntaxTests",
             "name" : "@Filter/PodSyntaxTests",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::NoTabsTests",
@@ -191,17 +192,17 @@
          {
             "class" : "Dist::Zilla::Plugin::PodCoverageTests",
             "name" : "@Filter/PodCoverageTests",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::MetaResources",
             "name" : "@Filter/MetaResources",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::Authority",
             "name" : "@Filter/Authority",
-            "version" : "1.005"
+            "version" : "1.006"
          },
          {
             "class" : "Dist::Zilla::Plugin::EOLTests",
@@ -211,7 +212,7 @@
          {
             "class" : "Dist::Zilla::Plugin::AutoPrereqs",
             "name" : "@Filter/AutoPrereqs",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "inc::DBICOptionalDeps",
@@ -227,7 +228,7 @@
                }
             },
             "name" : "ConfigureRequires",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "inc::DistMeta",
@@ -243,37 +244,37 @@
                }
             },
             "name" : "Prereqs",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":InstallModules",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":IncModules",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":TestFiles",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":ExecFiles",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":ShareFiles",
-            "version" : "4.300002"
+            "version" : "4.300020"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",
             "name" : ":MainModule",
-            "version" : "4.300002"
+            "version" : "4.300020"
          }
       ],
       "zilla" : {
@@ -281,7 +282,7 @@
          "config" : {
             "is_trial" : "0"
          },
-         "version" : "4.300002"
+         "version" : "4.300020"
       }
    },
    "x_authority" : "cpan:NUFFIN"

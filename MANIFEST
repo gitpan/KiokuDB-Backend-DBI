@@ -14,6 +14,7 @@ lib/DBIx/Class/KiokuDB.pm
 lib/DBIx/Class/KiokuDB/EntryProxy.pm
 lib/DBIx/Class/Schema/KiokuDB.pm
 lib/KiokuDB/Backend/DBI.pm
+lib/KiokuDB/Backend/DBI.pm.orig
 lib/KiokuDB/Backend/DBI/Schema.pm
 lib/KiokuDB/TypeMap/Entry/DBIC/ResultSet.pm
 lib/KiokuDB/TypeMap/Entry/DBIC/ResultSource.pm

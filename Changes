@@ -1,3 +1,6 @@
+1.22
+    - Fix lookup of invalid entries that differ from a valid entry only in case
+
 1.21
     - Fix undocumented gin_index option to define_kiokudb_schema (frew)
 

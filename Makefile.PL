@@ -55,6 +55,7 @@ my %WriteMakefileArgs = (
     'KiokuDB::TypeMap' => '0',
     'KiokuDB::TypeMap::Entry' => '0',
     'KiokuDB::TypeMap::Entry::Naive' => '0',
+    'List::MoreUtils' => '0',
     'Moose' => '0',
     'Moose::Util::TypeConstraints' => '0',
     'MooseX::Types' => '0.08',
@@ -73,7 +74,7 @@ my %WriteMakefileArgs = (
     'strict' => '0',
     'warnings' => '0'
   },
-  'VERSION' => '1.21',
+  'VERSION' => '1.22',
   'test' => {
     'TESTS' => 't/*.t'
   }

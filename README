@@ -1,11 +1,11 @@
 
 
 This archive contains the distribution KiokuDB-Backend-DBI,
-version 1.21:
+version 1.22:
 
   L<DBI> backend for L<KiokuDB>
 
-This software is copyright (c) 2011 by Yuval Kogman, Infinity Interactive.
+This software is copyright (c) 2012 by Yuval Kogman, Infinity Interactive.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
