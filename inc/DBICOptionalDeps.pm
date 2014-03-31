@@ -1,6 +1,8 @@
 package inc::DBICOptionalDeps;
 use Moose;
 
+use DBIx::Class::Optional::Dependencies;
+
 extends 'Dist::Zilla::Plugin::MakeMaker::Awesome';
 
 override _build_MakeFile_PL_template => sub {
@@ -21,6 +23,17 @@ INJECT
     $template =~ s{(?=WriteMakefile\s*\()}{$injected};
 
     return $template;
+};
+
+around register_prereqs => sub {
+    my $orig = shift;
+    my $self = shift;
+    $self->$orig(@_);
+    $self->zilla->register_prereqs(
+        { phase => 'develop' },
+        %{ DBIx::Class::Optional::Dependencies->req_list_for('deploy') }
+    );
+    return
 };
 
 __PACKAGE__->meta->make_immutable;

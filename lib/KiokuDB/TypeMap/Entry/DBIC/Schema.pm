@@ -2,10 +2,9 @@ package KiokuDB::TypeMap::Entry::DBIC::Schema;
 BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::Schema::AUTHORITY = 'cpan:NUFFIN';
 }
-{
-  $KiokuDB::TypeMap::Entry::DBIC::Schema::VERSION = '1.22';
-}
+$KiokuDB::TypeMap::Entry::DBIC::Schema::VERSION = '1.23';
 use Moose;
+# ABSTRACT: KiokuDB::TypeMap::Entry for DBIx::Class::Schema objects.
 
 use Scalar::Util qw(weaken refaddr);
 
@@ -69,10 +68,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
-KiokuDB::TypeMap::Entry::DBIC::Schema - L<KiokuDB::TypeMap::Entry> for
-L<DBIx::Class::Schema> objects.
+KiokuDB::TypeMap::Entry::DBIC::Schema - KiokuDB::TypeMap::Entry for DBIx::Class::Schema objects.
+
+=head1 VERSION
+
+version 1.23
 
 =head1 DESCRIPTION
 
@@ -85,10 +89,17 @@ References to L<DBIx::Class::Schema> objects which are not a part of the
 underlying L<DBIx::Class> layout are currently not supported, but may be in the
 future.
 
-=begin Pod::Coverage
+=for Pod::Coverage compile
 
-compile
+=head1 AUTHOR
 
-=end Pod::Coverage
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

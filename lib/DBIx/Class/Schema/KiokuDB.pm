@@ -2,15 +2,15 @@ package DBIx::Class::Schema::KiokuDB;
 BEGIN {
   $DBIx::Class::Schema::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
-{
-  $DBIx::Class::Schema::KiokuDB::VERSION = '1.22';
-}
-
+# ABSTRACT: Hybrid KiokuDB/DBIx::Class::Schema schema support.
+$DBIx::Class::Schema::KiokuDB::VERSION = '1.23';
 use strict;
 use warnings;
 
 use Carp qw(croak);
 
+use DBI 1.607 ();
+use DBIx::Class 0.08127 ();
 use DBIx::Class::KiokuDB::EntryProxy;
 use DBIx::Class::ResultSource::Table;
 
@@ -168,10 +168,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
-DBIx::Class::Schema::KiokuDB - Hybrid L<KiokuDB>/L<DBIx::Class::Schema> schema
-support.
+DBIx::Class::Schema::KiokuDB - Hybrid KiokuDB/DBIx::Class::Schema schema support.
+
+=head1 VERSION
+
+version 1.23
 
 =head1 SYNOPSIS
 
@@ -278,13 +283,20 @@ L<DBIx::Class>.
 
 L<DBIx::Class::KiokuDB>, L<KiokuDB::Backend::DBI>.
 
-=begin Pod::Coverage
-
-define_kiokudb_entries_resultsource
+=for Pod::Coverage define_kiokudb_entries_resultsource
 define_kiokudb_gin_index_resultsource
 define_kiokudb_schema
 kiokudb_handle
 
-=end Pod::Coverage
+=head1 AUTHOR
+
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

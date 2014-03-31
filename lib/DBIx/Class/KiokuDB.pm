@@ -2,10 +2,8 @@ package DBIx::Class::KiokuDB;
 BEGIN {
   $DBIx::Class::KiokuDB::AUTHORITY = 'cpan:NUFFIN';
 }
-{
-  $DBIx::Class::KiokuDB::VERSION = '1.22';
-}
-
+# ABSTRACT: Refer to KiokuDB objects from DBIx::Class tables.
+$DBIx::Class::KiokuDB::VERSION = '1.23';
 use strict;
 use warnings;
 
@@ -189,10 +187,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
-DBIx::Class::KiokuDB - Refer to L<KiokuDB> objects from L<DBIx::Class>
-tables.
+DBIx::Class::KiokuDB - Refer to KiokuDB objects from DBIx::Class tables.
+
+=head1 VERSION
+
+version 1.23
 
 =head1 SYNOPSIS
 
@@ -275,3 +278,16 @@ L<KiokuDB> storage.
 Adds a check to ensure that all referenced L<KiokuDB> objects are in storage.
 
 =back
+
+=head1 AUTHOR
+
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

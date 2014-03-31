@@ -1,19 +1,19 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use Test::More;
 
+use Test::Requires 'DBD::SQLite';
+use DBIx::Class::Optional::Dependencies;
+my $deploy_deps;
 BEGIN {
-    plan skip_all => "DBD::SQLite and SQL::Translator >= 0.11005 are required"
-        unless eval "use DBI; use DBD::SQLite; use DBIx::Class::Optional::Dependencies; 1";
-
-    plan skip_all => DBIx::Class::Optional::Dependencies->req_missing_for("deploy")
-        unless DBIx::Class::Optional::Dependencies->req_ok_for("deploy");
+    $deploy_deps = DBIx::Class::Optional::Dependencies->req_list_for('deploy');
 }
+use Test::Requires $deploy_deps;
 
 use Test::TempDir;
 
-use ok 'KiokuDB';
-use ok 'KiokuDB::Backend::DBI';
+use KiokuDB;
+use KiokuDB::Backend::DBI;
 
 use KiokuDB::Test;
 

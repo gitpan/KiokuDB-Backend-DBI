@@ -2,10 +2,9 @@ package KiokuDB::TypeMap::Entry::DBIC::Row;
 BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::Row::AUTHORITY = 'cpan:NUFFIN';
 }
-{
-  $KiokuDB::TypeMap::Entry::DBIC::Row::VERSION = '1.22';
-}
+$KiokuDB::TypeMap::Entry::DBIC::Row::VERSION = '1.23';
 use Moose;
+# ABSTRACT: KiokuDB::TypeMap::Entry for DBIx::Class::Row objects.
 
 use JSON;
 use Scalar::Util qw(weaken);
@@ -80,10 +79,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
-KiokuDB::TypeMap::Entry::DBIC::Row - L<KiokuDB::TypeMap::Entry> for
-L<DBIx::Class::Row> objects.
+KiokuDB::TypeMap::Entry::DBIC::Row - KiokuDB::TypeMap::Entry for DBIx::Class::Row objects.
+
+=head1 VERSION
+
+version 1.23
 
 =head1 DESCRIPTION
 
@@ -102,10 +106,17 @@ already present in the other tables.
 Looking up an object with such an ID is a dynamic lookup that delegates to the
 L<DBIx::Class::Schema> and resultsets.
 
-=begin Pod::Coverage
+=for Pod::Coverage compile
 
-compile
+=head1 AUTHOR
 
-=end Pod::Coverage
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

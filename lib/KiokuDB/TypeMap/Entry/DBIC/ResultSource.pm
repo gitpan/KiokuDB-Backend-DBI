@@ -2,10 +2,9 @@ package KiokuDB::TypeMap::Entry::DBIC::ResultSource;
 BEGIN {
   $KiokuDB::TypeMap::Entry::DBIC::ResultSource::AUTHORITY = 'cpan:NUFFIN';
 }
-{
-  $KiokuDB::TypeMap::Entry::DBIC::ResultSource::VERSION = '1.22';
-}
+$KiokuDB::TypeMap::Entry::DBIC::ResultSource::VERSION = '1.23';
 use Moose;
+# ABSTRACT: KiokuDB::TypeMap::Entry for DBIx::Class::ResultSource objects.
 
 use Scalar::Util qw(weaken refaddr);
 
@@ -72,10 +71,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
-KiokuDB::TypeMap::Entry::DBIC::ResultSource - L<KiokuDB::TypeMap::Entry>
-for L<DBIx::Class::ResultSource> objects.
+KiokuDB::TypeMap::Entry::DBIC::ResultSource - KiokuDB::TypeMap::Entry for DBIx::Class::ResultSource objects.
+
+=head1 VERSION
+
+version 1.23
 
 =head1 DESCRIPTION
 
@@ -90,10 +94,17 @@ and are not actually written to storage.
 Looking up such an ID causes the backend to dynamically search for such a
 resultset in the L<DBIx::Class::Schema>.
 
-=begin Pod::Coverage
+=for Pod::Coverage compile
 
-compile
+=head1 AUTHOR
 
-=end Pod::Coverage
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

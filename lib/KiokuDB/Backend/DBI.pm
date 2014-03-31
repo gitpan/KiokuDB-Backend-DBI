@@ -1,29 +1,29 @@
-#!/usr/bin/perl
-
 package KiokuDB::Backend::DBI;
 BEGIN {
   $KiokuDB::Backend::DBI::AUTHORITY = 'cpan:NUFFIN';
 }
-{
-  $KiokuDB::Backend::DBI::VERSION = '1.22';
-}
+$KiokuDB::Backend::DBI::VERSION = '1.23';
 use Moose;
+# ABSTRACT: DBI backend for KiokuDB
 
 use Moose::Util::TypeConstraints;
 
-use MooseX::Types -declare => [qw(ValidColumnName SchemaProto)];
+use MooseX::Types 0.08 -declare => [qw(ValidColumnName SchemaProto)];
 
 use MooseX::Types::Moose qw(ArrayRef HashRef Str Defined);
 
 use Moose::Util::TypeConstraints qw(enum);
 
 use Try::Tiny;
-use Data::Stream::Bulk::DBI;
+use Data::Stream::Bulk::DBI 0.07;
 use SQL::Abstract;
 use JSON;
 use Scalar::Util qw(weaken refaddr);
 use List::MoreUtils qw(any);
+use Class::Load qw(load_class);
+use Search::GIN 0.07 ();
 
+use KiokuDB 0.46 ();
 use KiokuDB::Backend::DBI::Schema;
 use KiokuDB::TypeMap;
 use KiokuDB::TypeMap::Entry::DBIC::Row;
@@ -54,7 +54,7 @@ my %reserved_cols = ( map { $_ => 1 } @reserved_cols );
 
 subtype ValidColumnName, as Str, where { not exists $reserved_cols{$_} };
 subtype SchemaProto, as Defined, where {
-    Class::MOP::load_class($_) unless ref;
+    load_class($_) unless ref;
     !ref($_) || blessed($_) and $_->isa("DBIx::Class::Schema::KiokuDB");
 };
 
@@ -1008,7 +1008,7 @@ sub new_garbage_collector {
         my $cmd = $args{command};
         my $class = $args{class} || $cmd ? $cmd->class : "KiokuDB::GC::Naive";
 
-        Class::MOP::load_class($class);
+        load_class($class);
 
         return $class->new(
             %args,
@@ -1026,9 +1026,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
-KiokuDB::Backend::DBI - L<DBI> backend for L<KiokuDB>
+KiokuDB::Backend::DBI - DBI backend for KiokuDB
+
+=head1 VERSION
+
+version 1.23
 
 =head1 SYNOPSIS
 
@@ -1308,21 +1314,10 @@ C<LONGBLOB> datatype.
 
 =head1 VERSION CONTROL
 
-L<http://github.com/nothingmuch/kiokudb-backend-dbi>
+KiokuDB-Backend-DBI is maintained using Git. Information about the repository
+is available on L<http://www.iinteractive.com/kiokudb/>
 
-=head1 AUTHOR
-
-Yuval Kogman E<lt>nothingmuch@woobling.orgE<gt>
-
-=head1 COPYRIGHT
-
-    Copyright (c) 2008, 2009 Yuval Kogman, Infinity Interactive. All
-    rights reserved This program is free software; you can redistribute
-    it and/or modify it under the same terms as Perl itself.
-
-=begin Pod::Coverage
-
-BUILD
+=for Pod::Coverage BUILD
 DEMOLISH
 all_entries
 all_entry_ids
@@ -1357,6 +1352,15 @@ txn_commit
 txn_rollback
 update_index
 
-=end Pod::Coverage
+=head1 AUTHOR
+
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

@@ -2,10 +2,8 @@ package DBIx::Class::KiokuDB::EntryProxy;
 BEGIN {
   $DBIx::Class::KiokuDB::EntryProxy::AUTHORITY = 'cpan:NUFFIN';
 }
-{
-  $DBIx::Class::KiokuDB::EntryProxy::VERSION = '1.22';
-}
-
+# ABSTRACT: A proxying result class for KiokuDB objects
+$DBIx::Class::KiokuDB::EntryProxy::VERSION = '1.23';
 use strict;
 use warnings;
 
@@ -38,9 +36,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 DBIx::Class::KiokuDB::EntryProxy - A proxying result class for KiokuDB objects
+
+=head1 VERSION
+
+version 1.23
 
 =head1 SYNOPSIS
 
@@ -51,11 +55,18 @@ DBIx::Class::KiokuDB::EntryProxy - A proxying result class for KiokuDB objects
 This class implements the necessary glue to properly inflate resultsets for
 L<KiokuDB> object into proper instances using L<KiokuDB>.
 
-=begin Pod::Coverage
-
-new
+=for Pod::Coverage new
 inflate_result
 
-=end Pod::Coverage
+=head1 AUTHOR
+
+Yuval Kogman <nothingmuch@woobling.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut

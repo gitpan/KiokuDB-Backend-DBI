@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -9,9 +9,13 @@ use Test::Exception;
 
 use KiokuDB;
 
+use Test::Requires 'DBD::SQLite';
+use DBIx::Class::Optional::Dependencies;
+my $deploy_deps;
 BEGIN {
-    plan skip_all => "DBD::SQLite  are required" unless eval { require DBI; require DBD::SQLite };
+    $deploy_deps = DBIx::Class::Optional::Dependencies->req_list_for('deploy');
 }
+use Test::Requires $deploy_deps;
 
 {
     package MyApp::DB::Result::Foo;
